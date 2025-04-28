@@ -54,7 +54,7 @@ The `justfile` provides a set of standardized commands for common development ta
 - **test**
   - Runs all Deno tests in the `src/tests/` directory.
   - Usage: `just test`
-  - _Ensure all new features and bug fixes are covered by tests. See [Deno Testing Docs](https://docs.deno.com/runtime/fundamentals/testing/)._ 
+  - _Ensure all new features and bug fixes are covered by tests. See [Deno Testing Docs](https://docs.deno.com/runtime/fundamentals/testing/)._
 
 ### Linting and Formatting
 

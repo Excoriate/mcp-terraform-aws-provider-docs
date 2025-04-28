@@ -27,4 +27,4 @@ jobs:
         run: echo "✅ Docker image built and ran successfully!"
       - name: 🚨 CI Docker workflow failed
         if: failure()
-        run: echo "❌ Docker build or run failed. Please review the logs above." 
+        run: echo "❌ Docker build or run failed. Please review the logs above."

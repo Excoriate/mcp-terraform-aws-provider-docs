@@ -15,10 +15,15 @@ jobs:
 
       - name: 📦 Setup Deno (latest stable)
         uses: denoland/setup-deno@v2
+        id: deno-version
         with:
-          deno-version: .dvmrc
+          deno-version-file: .dvmrc
 
-      - name: 🧹 Run Linter 
+      - name: ℹ️ Check Deno Version
+        run: |
+          echo "📦 Deno version information: ${{ steps.deno-version.outputs.version }}"
+
+      - name: 🧹 Run Linter & Formatter
         run: deno run lint
 
       - name: 🎨 Run Formatter
@@ -33,4 +38,4 @@ jobs:
         run: echo "✅ All TypeScript checks passed!"
       - name: 🚨 CI TypeScript workflow failed
         if: failure()
-        run: echo "❌ TypeScript checks failed. Please review the logs above." 
+        run: echo "❌ TypeScript checks failed. Please review the logs above."
