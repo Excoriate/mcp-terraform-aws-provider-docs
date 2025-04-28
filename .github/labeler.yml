@@ -4,70 +4,34 @@
 # Label for CI/CD changes
 ci/cd:
   - changed-files:
-      - any-glob-to-any-file: '.github/workflows/*'
-      - any-glob-to-any-file: 'justfile'
-      - any-glob-to-any-file: 'Dockerfile'
+      - any-glob-to-any-file: ['.github/workflows/*', 'justfile', 'Dockerfile']
 
 # Label for documentation changes
 documentation:
   - changed-files:
-      - any-glob-to-any-file: 'README.md'
-      - any-glob-to-any-file: 'docs/**/*.md'
-      - any-glob-to-any-file: 'docs/**/*'
-      - any-glob-to-any-file: '*.md'
+      - any-glob-to-any-file: ['README.md', 'docs/**/*.md', 'docs/**/*', '*.md']
 
 # Label for source code changes
 source:
   - changed-files:
-      - any-glob-to-any-file: 'src/**/*.ts'
-      - any-glob-to-any-file: 'src/**/*.js'
-      - any-glob-to-any-file: 'src/**/*.json'
-      - any-glob-to-any-file: 'src/**/*.md'
-      - any-glob-to-any-file: 'main.ts'
+      - any-glob-to-any-file: ['src/**/*.ts', 'src/**/*.js', 'src/**/*.json', 'src/**/*.md', 'main.ts']
 
 # Label for configuration changes / patches
 patch:
   - changed-files:
-      - any-glob-to-any-file: 'LICENSE'
-      - any-glob-to-any-file: 'justfile'
-      - any-glob-to-any-file: 'deno.json'
-      - any-glob-to-any-file: 'deno.lock'
-      - any-glob-to-any-file: '.github/labeler.yml'
-      - any-glob-to-any-file: '.github/settings.yml'
-      - any-glob-to-any-file: '.github/dependabot.yml'
-      - any-glob-to-any-file: '.github/ISSUE_TEMPLATE/*'
-      - any-glob-to-any-file: '.github/CODEOWNERS'
-      - any-glob-to-any-file: '.github/*.yml'
-      - any-glob-to-any-file: '.gitignore'
-      - any-glob-to-any-file: '.gitattributes'
+      - any-glob-to-any-file: ['LICENSE', 'justfile', 'deno.json', 'deno.lock', '.github/labeler.yml', '.github/settings.yml', '.github/dependabot.yml', '.github/ISSUE_TEMPLATE/*', '.github/CODEOWNERS', '.github/*.yml', '.gitignore', '.gitattributes']
 
 scripts:
   - changed-files:
-      - any-glob-to-any-file: 'scripts/**/*'
+      - any-glob-to-any-file: ['scripts/**/*']
 
 config:
   - changed-files:
-      - any-glob-to-any-file: '.env'
-      - any-glob-to-any-file: '.env.example'
-      - any-glob-to-any-file: 'deno.json'
-      - any-glob-to-any-file: 'deno.lock'
-      - any-glob-to-any-file: 'biome.json'
-      - any-glob-to-any-file: '.nvmrc'
-      - any-glob-to-any-file: '.pre-commit-config.yaml'
-      - any-glob-to-any-file: '.shellcheckrc'
-      - any-glob-to-any-file: '.gitattributes'
-      - any-glob-to-any-file: '.gitignore'
-      - any-glob-to-any-file: '.vscode/**/*'
+      - any-glob-to-any-file: ['.env', '.env.example', 'deno.json', 'deno.lock', 'biome.json', '.nvmrc', '.pre-commit-config.yaml', '.shellcheckrc', '.gitattributes', '.gitignore', '.vscode/**/*']
 
 meta:
   - changed-files:
-      - any-glob-to-any-file: 'LICENSE'
-      - any-glob-to-any-file: 'SECURITY.md'
-      - any-glob-to-any-file: '.github/labeler.yml'
-      - any-glob-to-any-file: '.github/settings.yml'
-      - any-glob-to-any-file: '.github/ISSUE_TEMPLATE/*'
-      - any-glob-to-any-file: '.github/CODEOWNERS'
-      - any-glob-to-any-file: '.github/*.yml'
+      - any-glob-to-any-file: ['LICENSE', 'SECURITY.md', '.github/labeler.yml', '.github/settings.yml', '.github/ISSUE_TEMPLATE/*', '.github/CODEOWNERS', '.github/*.yml']
 
 feature:
  - head-branch: ['^feature', 'feature']
@@ -80,4 +44,3 @@ ci:
 
 refactor:
  - head-branch: ['^refactor', 'refactor']
-
