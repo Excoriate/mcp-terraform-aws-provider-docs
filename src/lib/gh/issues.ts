@@ -50,6 +50,7 @@ export function formatGhIssueDataAsTXT(
 
 	const lines = [
 		"----------------------------------------",
+		`ID:          ${issue.number}`,
 		`TITLE:       #${issue.number}: ${issue.title}`,
 		`DESCRIPTION: ${description}`,
 		`SOURCE:      ${issueUrl}`,

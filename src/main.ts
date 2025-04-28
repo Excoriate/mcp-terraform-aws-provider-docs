@@ -15,6 +15,8 @@ import { getAndValidateGithubToken } from "./lib/gh/token.ts";
 import { McpNotificationLogger } from "./lib/mcp/logger-events.ts";
 import { RESOURCES, getResourceByUri } from "./lib/mcp/resources.ts";
 import {
+	TOOLS_ISSUES_GET_ISSUE,
+	TOOLS_ISSUES_GET_ISSUE_ARGS_SCHEMA,
 	TOOLS_ISSUES_GET_OPEN_ISSUES,
 	TOOLS_ISSUES_GET_OPEN_ISSUES_ARGS_SCHEMA,
 } from "./lib/mcp/tools-issues.ts";
@@ -58,7 +60,7 @@ server.setRequestHandler(ReadResourceRequestSchema, (request) => {
 });
 
 server.setRequestHandler(ListToolsRequestSchema, () => ({
-	tools: [TOOLS_ISSUES_GET_OPEN_ISSUES],
+	tools: [TOOLS_ISSUES_GET_OPEN_ISSUES, TOOLS_ISSUES_GET_ISSUE],
 }));
 
 server.setRequestHandler(
@@ -131,6 +133,41 @@ server.setRequestHandler(
 							{
 								type: "text" as const,
 								text: `Error handling ${TOOLS_ISSUES_GET_OPEN_ISSUES.name}: ${error}`,
+							},
+						],
+					};
+				}
+			case TOOLS_ISSUES_GET_ISSUE.name:
+				// Get a specific issue by number
+				try {
+					const result = TOOLS_ISSUES_GET_ISSUE_ARGS_SCHEMA.safeParse(toolArgs);
+					if (!result.success) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: `Invalid arguments: ${result.error.message}`,
+								},
+							],
+						};
+					}
+					const { issueNumber } = result.data;
+					const gh = new GitHubAdapter(ghTokenFromEnv);
+					const issue = await gh.getIssueContent(
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+						issueNumber,
+					);
+					const formatted = formatGhIssuesDataAsTXT(
+						[issue],
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+					);
+					return { content: formatted.content };
+				} catch (error: unknown) {
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: `Error handling ${TOOLS_ISSUES_GET_ISSUE.name}: ${error instanceof Error ? error.message : String(error)}`,
 							},
 						],
 					};
