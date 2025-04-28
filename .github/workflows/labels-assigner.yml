@@ -1,7 +1,7 @@
 ---
-name: Assign labels on PR
+name: 🔖 Assign labels on PR
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, labeled, unlabeled, synchronize]
 defaults:
   run:
@@ -13,9 +13,11 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v3
+      - uses: actions/labeler@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          sync-labels: true
+          configuration-path: .github/labeler.yml
   size-label:
     runs-on: ubuntu-latest
     steps:
