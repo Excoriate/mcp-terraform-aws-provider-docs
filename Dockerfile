@@ -1,8 +1,9 @@
 FROM denoland/deno:alpine
 
-WORKDIR /app
+WORKDIR /app/src
 
-COPY . .
+COPY ../deno.json ../
+COPY src/ ./
 
 # Cache dependencies (optional, for larger projects with deps.ts)
 # RUN deno cache deps.ts

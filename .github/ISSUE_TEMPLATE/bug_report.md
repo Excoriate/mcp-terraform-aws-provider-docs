@@ -90,4 +90,5 @@ assignees: ["Excoriate"] # Adjust if needed
 - [ ] I've shared relevant environment details
 - [ ] I've added diagnostic information (if applicable)
 
-**Thank you for helping improve the `mcp-terraform-aws-provider-docs` server!** 🐛
+**Thank you for helping improve the `mcp-terraform-aws-provider-docs` server!**
+🐛

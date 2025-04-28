@@ -197,7 +197,10 @@ Tools that transform or analyze data:
 
 ### GitHub Issue Retrieval
 
-A tool for retrieving all open issues from the official Terragrunt GitHub repository. This tool enables users to programmatically access the current list of open issues, which is essential for tracking bugs, feature requests, and ongoing work in the Terragrunt project.
+A tool for retrieving all open issues from the official Terragrunt GitHub
+repository. This tool enables users to programmatically access the current list
+of open issues, which is essential for tracking bugs, feature requests, and
+ongoing work in the Terragrunt project.
 
 ```typescript
 {
@@ -216,14 +219,21 @@ A tool for retrieving all open issues from the official Terragrunt GitHub reposi
 ```
 
 **When to use:**
-- When you need to fetch the complete list of open issues for triage, reporting, or analysis
+
+- When you need to fetch the complete list of open issues for triage, reporting,
+  or analysis
 - When you want to monitor the current state of the Terragrunt issue tracker
-- For building dashboards, reports, or integrations that require up-to-date issue data
+- For building dashboards, reports, or integrations that require up-to-date
+  issue data
 
 **Best practices:**
-- Always provide a valid GitHub token to ensure reliable access and avoid rate limiting
-- Use this tool to keep track of open issues for project management, automation, or reporting
-- Combine with other tools (such as documentation fetchers) for comprehensive project insights
+
+- Always provide a valid GitHub token to ensure reliable access and avoid rate
+  limiting
+- Use this tool to keep track of open issues for project management, automation,
+  or reporting
+- Combine with other tools (such as documentation fetchers) for comprehensive
+  project insights
 
 ## Best practices
 

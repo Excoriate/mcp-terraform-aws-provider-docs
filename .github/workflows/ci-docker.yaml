@@ -1,0 +1,30 @@
+name: 🐳CI - Docker
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  docker:
+    name: 🐳 Build and Run Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Build Docker image
+        run: |
+          docker build -t mcp-terraform-aws-provider-docs .
+
+      - name: 🐳 Run Docker container (smoke test)
+        run: |
+          docker run --rm -e GITHUB_TOKEN=fake_token mcp-terraform-aws-provider-docs || (
+            echo "❌ Docker container failed to start. Check logs above." && exit 1
+          )
+
+      - name: 🎉 CI Docker workflow completed successfully
+        if: success()
+        run: echo "✅ Docker image built and ran successfully!"
+      - name: 🚨 CI Docker workflow failed
+        if: failure()
+        run: echo "❌ Docker build or run failed. Please review the logs above." 

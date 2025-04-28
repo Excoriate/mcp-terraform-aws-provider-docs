@@ -1,0 +1,36 @@
+name: 🔍CI - TypeScript
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  typescript:
+    name: 🔍 TypeScript Lint, Format, and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Deno (latest stable)
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: .dvmrc
+
+      - name: 🧹 Run Linter 
+        run: deno run lint
+
+      - name: 🎨 Run Formatter
+        run: deno run fmt
+
+      - name: 🧪 Run Tests
+        run: deno test
+
+      # User-friendly summary
+      - name: 🎉 CI TypeScript workflow completed successfully
+        if: success()
+        run: echo "✅ All TypeScript checks passed!"
+      - name: 🚨 CI TypeScript workflow failed
+        if: failure()
+        run: echo "❌ TypeScript checks failed. Please review the logs above." 

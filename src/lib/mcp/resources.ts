@@ -1,16 +1,19 @@
 import type { Resource } from "@modelcontextprotocol/sdk/types.js";
 
+export const TERRAFORM_AWS_PROVIDER_REPOSITORY_URI =
+	"https://github.com/hashicorp/terraform-aws-provider";
+
 /**
  * List of all resources available to the MCP server.
  */
 export const RESOURCES: Resource[] = [
-  {
-    name: "terraform-provider-repo",
-    uri: "config://repo",
-    text: "https://github.com/terraform-providers/terraform-provider-aws",
-    mimeType: "text/plain",
-  },
-  // Add more resources here as needed
+	{
+		name: "terraform-provider-repo",
+		uri: "config://repo",
+		text: TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+		mimeType: "text/plain",
+	},
+	// Add more resources here as needed
 ];
 
 /**
@@ -19,6 +22,5 @@ export const RESOURCES: Resource[] = [
  * @returns The resource if found, otherwise undefined.
  */
 export function getResourceByUri(uri: string): Resource | undefined {
-  return RESOURCES.find((res) => res.uri === uri);
+	return RESOURCES.find((res) => res.uri === uri);
 }
-

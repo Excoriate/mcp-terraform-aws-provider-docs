@@ -59,4 +59,5 @@ assignees: ["Excoriate"] # Adjust if needed
 - [ ] I've described the proposed solution
 - [ ] I've explained the use case and value
 
-**Thank you for helping improve the `mcp-terraform-aws-provider-docs` server!** 🎉
+**Thank you for helping improve the `mcp-terraform-aws-provider-docs` server!**
+🎉

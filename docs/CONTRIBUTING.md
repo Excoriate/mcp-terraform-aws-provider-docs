@@ -1,10 +1,15 @@
 # Contributing to MCP Terraform AWS Provider Docs
 
-Thank you for your interest in contributing! This project is a Deno/TypeScript implementation of a Model Context Protocol (MCP) server for AWS provider documentation for Terragrunt and GitHub issue integration. Please follow these guidelines to ensure a smooth contribution process.
+Thank you for your interest in contributing! This project is a Deno/TypeScript
+implementation of a Model Context Protocol (MCP) server for AWS provider
+documentation for Terragrunt and GitHub issue integration. Please follow these
+guidelines to ensure a smooth contribution process.
 
 ## Project Overview
+
 - **Language/Runtime:** Deno (TypeScript)
-- **Purpose:** Provide contextual AWS provider documentation for Terragrunt and GitHub issue data to AI agents via MCP tools
+- **Purpose:** Provide contextual AWS provider documentation for Terragrunt and
+  GitHub issue data to AI agents via MCP tools
 - **Key Files:**
   - `libs/mcp/tools.ts`: All MCP tool definitions and schemas
   - `README.md`: Project overview and tool table
@@ -12,6 +17,7 @@ Thank you for your interest in contributing! This project is a Deno/TypeScript i
   - `docs/`: Documentation, including this guide
 
 ## Environment Setup
+
 1. **Install Deno:**
    - [Deno Installation Guide](https://deno.land/manual/getting_started/installation)
 2. **Clone the repository:**
@@ -20,15 +26,18 @@ Thank you for your interest in contributing! This project is a Deno/TypeScript i
    cd mcp-terraform-aws-provider-docs
    ```
 3. **Install dependencies:**
-   - Deno handles dependencies via imports; ensure you have internet access for first run.
+   - Deno handles dependencies via imports; ensure you have internet access for
+     first run.
 4. **Run the project:**
    ```sh
    deno run -A main.ts
    ```
 
 ## Code Style & Standards
+
 - **Language:** TypeScript (strict mode recommended)
-- **Validation:** Use [Zod](https://zod.dev/) for schema validation (see `libs/mcp/tools.ts`)
+- **Validation:** Use [Zod](https://zod.dev/) for schema validation (see
+  `libs/mcp/tools.ts`)
 - **Formatting:**
   - Use [biome](https://biomejs.dev/) or Deno's built-in formatter:
     ```sh
@@ -47,6 +56,7 @@ Thank you for your interest in contributing! This project is a Deno/TypeScript i
   - Address all warnings/errors before submitting
 
 ## Branching & Pull Request Process
+
 - **Branching:**
   - Use feature branches: `feature/<short-description>`
   - For bugfixes: `fix/<short-description>`
@@ -62,6 +72,7 @@ Thank you for your interest in contributing! This project is a Deno/TypeScript i
     - `docs: update README tools table`
 
 ## Testing & Verification
+
 - **Testing:**
   - Place tests in the `tests/` directory
   - Use Deno's built-in test runner:
@@ -73,15 +84,21 @@ Thank you for your interest in contributing! This project is a Deno/TypeScript i
   - Cross-reference codebase structure using `repomix-output.xml` for context
 
 ## Documentation Updates
+
 - **README.md:**
-  - Update the tools table if you add, remove, or change any tool in `libs/mcp/tools.ts`
+  - Update the tools table if you add, remove, or change any tool in
+    `libs/mcp/tools.ts`
 - **CONTRIBUTING.md:**
   - Update this file if contribution process or standards change
 
 ## Codebase Structure Reference
-- See `repomix-output.xml` for a merged, searchable summary of all files, components, and their relationships. This is especially useful for onboarding and for understanding cross-file dependencies.
+
+- See `repomix-output.xml` for a merged, searchable summary of all files,
+  components, and their relationships. This is especially useful for onboarding
+  and for understanding cross-file dependencies.
 
 ## Styleguide Summary
+
 - TypeScript strict mode
 - Zod for all schema validation
 - Deno fmt/lint for formatting and style
@@ -90,6 +107,7 @@ Thank you for your interest in contributing! This project is a Deno/TypeScript i
 - Update documentation with every relevant code change
 
 ## Questions or Help?
+
 - Open an issue or discussion in the repository
 - Tag maintainers for review or clarification
 
