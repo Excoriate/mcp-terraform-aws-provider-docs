@@ -71,12 +71,18 @@ Success Criteria:
 };
 
 export const TOOLS_ISSUES_GET_ISSUE_ARGS_SCHEMA = z.object({
-	issueNumber: z.number({
-		required_error: "The issueNumber parameter is required and must be a valid GitHub issue number. Please provide a numeric value to fetch the specific issue details.",
-		invalid_type_error: "The issueNumber parameter must be a valid number. Please provide a numeric value to fetch the specific issue details.",
-	}).min(1, {
-		message: "The issueNumber parameter must be a positive number greater than 0. Please provide a valid issue number to fetch the specific issue details.",
-	}).describe("The exact GitHub issue number to retrieve."),
+	issueNumber: z
+		.number({
+			required_error:
+				"The issueNumber parameter is required and must be a valid GitHub issue number. Please provide a numeric value to fetch the specific issue details.",
+			invalid_type_error:
+				"The issueNumber parameter must be a valid number. Please provide a numeric value to fetch the specific issue details.",
+		})
+		.min(1, {
+			message:
+				"The issueNumber parameter must be a positive number greater than 0. Please provide a valid issue number to fetch the specific issue details.",
+		})
+		.describe("The exact GitHub issue number to retrieve."),
 });
 
 export const TOOLS_ISSUES_GET_ISSUE = {
