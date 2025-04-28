@@ -89,9 +89,34 @@ branches:
           # - "Format Check" # Often done locally or via pre-commit, but can be added
           # Add other required checks like build steps if applicable
 
+      require_signatures: true
+
       enforce_admins: false # Admins are not exempt from protection rules
       required_linear_history: true # Enforce linear history
       restrictions: # Restrict who can push to main (ADJUST AS NEEDED)
+        users: [Excoriate]
+        teams: [maintainers]
+
+  - name: master
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+        dismissal_restrictions: {}
+        required_conversation_resolution: true
+
+      required_status_checks:
+        strict: true
+        contexts:
+          - "Lint"
+          - "Test"
+
+      require_signatures: true
+
+      enforce_admins: false
+      required_linear_history: true
+      restrictions:
         users: [Excoriate]
         teams: [maintainers]
 
