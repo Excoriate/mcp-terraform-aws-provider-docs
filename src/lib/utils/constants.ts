@@ -8,3 +8,5 @@ export const TERRAFORM_AWS_PROVIDER_REPOSITORY_URL =
 	"https://github.com/hashicorp/terraform-provider-aws";
 export const TERRAFORM_AWS_PROVIDER_REPOSITORY_OWNER = "hashicorp";
 export const TERRAFORM_AWS_PROVIDER_REPOSITORY_NAME = "terraform-provider-aws";
+export const TERRAFORM_AWS_PROVIDER_REGISTRY_URL =
+	"https://registry.terraform.io/providers/hashicorp/aws/latest";

@@ -10,7 +10,10 @@ import {
 	ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { GitHubAdapter } from "./lib/adapters/github-api.ts";
-import { formatGhIssuesDataAsTXT } from "./lib/gh/issues.ts";
+import type { Issue } from "./lib/adapters/github-api.ts";
+import { formatGhIssuesDataAsTXT } from "./lib/gh/data-formatter.ts";
+import { formatGhReleasesDataAsTXT } from "./lib/gh/data-formatter.ts";
+import { formatGhReleaseWithIssuesDataAsTXT } from "./lib/gh/data-formatter.ts";
 import { getAndValidateGithubToken } from "./lib/gh/token.ts";
 import { McpNotificationLogger } from "./lib/mcp/logger-events.ts";
 import { RESOURCES, getResourceByUri } from "./lib/mcp/resources.ts";
@@ -20,6 +23,14 @@ import {
 	TOOLS_ISSUES_GET_OPEN_ISSUES,
 	TOOLS_ISSUES_GET_OPEN_ISSUES_ARGS_SCHEMA,
 } from "./lib/mcp/tools-issues.ts";
+import {
+	TOOLS_RELEASES_GET_BY_TAG,
+	TOOLS_RELEASES_GET_BY_TAG_ARGS_SCHEMA,
+	TOOLS_RELEASES_GET_LATEST,
+	TOOLS_RELEASES_GET_LATEST_ARGS_SCHEMA,
+	TOOLS_RELEASES_LIST_ALL,
+	TOOLS_RELEASES_LIST_ALL_ARGS_SCHEMA,
+} from "./lib/mcp/tools-releases.ts";
 import {
 	MCP_SERVER_NAME,
 	MCP_SERVER_VERSION,
@@ -60,7 +71,13 @@ server.setRequestHandler(ReadResourceRequestSchema, (request) => {
 });
 
 server.setRequestHandler(ListToolsRequestSchema, () => ({
-	tools: [TOOLS_ISSUES_GET_OPEN_ISSUES, TOOLS_ISSUES_GET_ISSUE],
+	tools: [
+		TOOLS_ISSUES_GET_OPEN_ISSUES,
+		TOOLS_ISSUES_GET_ISSUE,
+		TOOLS_RELEASES_LIST_ALL,
+		TOOLS_RELEASES_GET_BY_TAG,
+		TOOLS_RELEASES_GET_LATEST,
+	],
 }));
 
 server.setRequestHandler(
@@ -172,6 +189,189 @@ server.setRequestHandler(
 						],
 					};
 				}
+			case TOOLS_RELEASES_LIST_ALL.name:
+				try {
+					const argsValidationResult =
+						TOOLS_RELEASES_LIST_ALL_ARGS_SCHEMA.safeParse(toolArgs);
+					if (!argsValidationResult.success) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: `Invalid arguments: ${argsValidationResult.error.message}`,
+								},
+							],
+						};
+					}
+					const gh = new GitHubAdapter(ghTokenFromEnv);
+					const releases = await gh.listReleases(
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+					);
+					const formatted = formatGhReleasesDataAsTXT(
+						releases,
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+					);
+					return { content: formatted.content };
+				} catch (error: unknown) {
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: `Error handling ${TOOLS_RELEASES_LIST_ALL.name}: ${error instanceof Error ? error.message : String(error)}`,
+							},
+						],
+					};
+				}
+			case TOOLS_RELEASES_GET_BY_TAG.name:
+				try {
+					const argsValidationResult =
+						TOOLS_RELEASES_GET_BY_TAG_ARGS_SCHEMA.safeParse(toolArgs);
+					if (!argsValidationResult.success) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: `Invalid arguments: ${argsValidationResult.error.message}`,
+								},
+							],
+						};
+					}
+					const { tag, include_issues = false } = argsValidationResult.data;
+					const gh = new GitHubAdapter(ghTokenFromEnv);
+					const release = await gh.getReleaseByTag(
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+						tag,
+					);
+					if (include_issues) {
+						const body = release.body || "";
+						const issueNumbers = Array.from(body.matchAll(/#(\d{2,7})/g)).map(
+							(m) => Number(m[1]),
+						);
+						const uniqueIssueNumbers = Array.from(new Set(issueNumbers));
+						const issues: Issue[] = [];
+						for (const issueNumber of uniqueIssueNumbers) {
+							try {
+								const issue = await gh.getIssueContent(
+									TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+									issueNumber,
+								);
+								issues.push(issue);
+							} catch (_) {
+								issues.push({
+									number: issueNumber,
+									title: `Referenced issue #${issueNumber} could not be fetched`,
+									state: "open",
+									user: { login: "unknown" },
+									labels: [],
+									created_at: "",
+									updated_at: "",
+									comments: 0,
+									body: "(Referenced issue could not be fetched or does not exist)",
+								} as Issue);
+							}
+						}
+						const formatted = formatGhReleaseWithIssuesDataAsTXT(
+							release,
+							issues,
+							TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+						);
+						return { content: [formatted] };
+					}
+					const formatted = formatGhReleasesDataAsTXT(
+						[release],
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+					);
+					return { content: formatted.content };
+				} catch (error: unknown) {
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: `Error handling ${TOOLS_RELEASES_GET_BY_TAG.name}: ${error instanceof Error ? error.message : String(error)}`,
+							},
+						],
+					};
+				}
+			case TOOLS_RELEASES_GET_LATEST.name:
+				try {
+					const argsValidationResult =
+						TOOLS_RELEASES_GET_LATEST_ARGS_SCHEMA.safeParse(toolArgs);
+					if (!argsValidationResult.success) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: `Invalid arguments: ${argsValidationResult.error.message}`,
+								},
+							],
+						};
+					}
+					const { include_issues = false } = argsValidationResult.data;
+					const gh = new GitHubAdapter(ghTokenFromEnv);
+					const releases = await gh.listReleases(
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+					);
+					if (!releases || releases.length === 0) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: "No releases found for the Terraform AWS Provider repository.",
+								},
+							],
+						};
+					}
+					const latest = releases[0];
+					if (include_issues) {
+						const body = latest.body || "";
+						const issueNumbers = Array.from(body.matchAll(/#(\d{2,7})/g)).map(
+							(m) => Number(m[1]),
+						);
+						const uniqueIssueNumbers = Array.from(new Set(issueNumbers));
+						const issues: Issue[] = [];
+						for (const issueNumber of uniqueIssueNumbers) {
+							try {
+								const issue = await gh.getIssueContent(
+									TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+									issueNumber,
+								);
+								issues.push(issue);
+							} catch (_) {
+								issues.push({
+									number: issueNumber,
+									title: `Referenced issue #${issueNumber} could not be fetched`,
+									state: "open",
+									user: { login: "unknown" },
+									labels: [],
+									created_at: "",
+									updated_at: "",
+									comments: 0,
+									body: "(Referenced issue could not be fetched or does not exist)",
+								} as Issue);
+							}
+						}
+						const formatted = formatGhReleaseWithIssuesDataAsTXT(
+							latest,
+							issues,
+							TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+						);
+						return { content: [formatted] };
+					}
+					const formatted = formatGhReleasesDataAsTXT(
+						[latest],
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+					);
+					return { content: formatted.content };
+				} catch (error: unknown) {
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: `Error handling ${TOOLS_RELEASES_GET_LATEST.name}: ${error instanceof Error ? error.message : String(error)}`,
+							},
+						],
+					};
+				}
 			default:
 				return {
 					content: [
@@ -191,15 +391,15 @@ try {
 	await server.connect(transport);
 
 	mcpLogger.sendInfoLogMessage({
-		message: "Server initialized",
+		message: `MCP server ${MCP_SERVER_NAME} version ${MCP_SERVER_VERSION} initialized`,
 	});
 
 	mcpLogger.sendInfoLogMessage({
-		message: "MCP server successfully connected and ready",
+		message: `MCP server ${MCP_SERVER_NAME} version ${MCP_SERVER_VERSION} successfully connected and ready`,
 	});
 
 	mcpLogger.sendInfoLogMessage({
-		message: "Server setup complete",
+		message: `MCP server ${MCP_SERVER_NAME} version ${MCP_SERVER_VERSION} setup complete`,
 	});
 } catch (error: unknown) {
 	const errorMessage = error instanceof Error ? error.message : String(error);

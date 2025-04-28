@@ -1,17 +1,25 @@
 import type { Resource } from "@modelcontextprotocol/sdk/types.js";
-import { TERRAFORM_AWS_PROVIDER_REPOSITORY_URI } from "../utils/constants.ts";
+import {
+	TERRAFORM_AWS_PROVIDER_REGISTRY_URL,
+	TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+} from "../utils/constants.ts";
 
 /**
  * List of all resources available to the MCP server.
  */
 export const RESOURCES: Resource[] = [
 	{
-		name: "terraform-provider-repo",
+		name: "terraform-aws-provider-repo",
 		uri: "config://repo",
 		text: TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
 		mimeType: "text/plain",
 	},
-	// Add more resources here as needed
+	{
+		name: "terraform-aws-provider-registry",
+		uri: "config://registry",
+		text: TERRAFORM_AWS_PROVIDER_REGISTRY_URL,
+		mimeType: "text/plain",
+	},
 ];
 
 /**

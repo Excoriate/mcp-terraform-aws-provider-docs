@@ -1,10 +1,50 @@
-// GitHubAdapter: A reusable Deno-compatible GitHub API client using Octokit
-// Requires: https://esm.sh/@octokit/rest (Octokit for Deno)
-
 import { Octokit } from "https://esm.sh/@octokit/rest@20.0.2";
-import type { Issue } from "../gh/issues.ts";
 
 export const MAX_GITHUB_ISSUES_PAGES = 12;
+
+export interface ReleaseAsset {
+	url: string;
+	id: number;
+	name: string;
+	label: string | null;
+	content_type: string;
+	state: string;
+	size: number;
+	download_count: number;
+	created_at: string;
+	updated_at: string;
+	browser_download_url: string;
+	[key: string]: unknown;
+}
+
+export interface Release {
+	url: string;
+	html_url: string;
+	id: number;
+	tag_name: string;
+	name: string | null;
+	body: string | null;
+	draft: boolean;
+	prerelease: boolean;
+	created_at: string;
+	published_at: string;
+	author: { login: string };
+	assets: ReleaseAsset[];
+	[key: string]: unknown; // Allow extra fields
+}
+
+export interface Issue {
+	number: number;
+	title: string;
+	state: "open" | "closed";
+	body?: string;
+	user: { login: string };
+	labels: Array<{ name: string }>;
+	created_at: string;
+	updated_at: string;
+	closed_at?: string;
+	comments: number;
+}
 
 /**
  * GitHubAdapter provides authenticated, reusable methods for interacting with the GitHub API.
@@ -190,6 +230,52 @@ export class GitHubAdapter {
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				throw new Error(`getIssueContent: ${err.message}`);
+			}
+			throw err;
+		}
+	}
+
+	/**
+	 * List all releases for a repository (paginated, up to 100 per page).
+	 * @param repo - Repository in 'owner/repo' format
+	 * @returns Array of release objects (see Octokit docs for structure)
+	 */
+	async listReleases(repo: string): Promise<Release[]> {
+		const [owner, repoName] = this.#parseRepo(repo);
+		try {
+			const res = await this.octokit.repos.listReleases({
+				owner,
+				repo: repoName,
+				per_page: 100, // max per page
+				page: 1,
+			});
+			return res.data as Release[];
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				throw new Error(`listReleases: ${err.message}`);
+			}
+			throw err;
+		}
+	}
+
+	/**
+	 * Get a specific release by tag name for a repository.
+	 * @param repo - Repository in 'owner/repo' format
+	 * @param tag - The release tag (e.g., 'v5.96.0')
+	 * @returns Release object (see Octokit docs for structure)
+	 */
+	async getReleaseByTag(repo: string, tag: string): Promise<Release> {
+		const [owner, repoName] = this.#parseRepo(repo);
+		try {
+			const res = await this.octokit.repos.getReleaseByTag({
+				owner,
+				repo: repoName,
+				tag,
+			});
+			return res.data as Release;
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				throw new Error(`getReleaseByTag: ${err.message}`);
 			}
 			throw err;
 		}

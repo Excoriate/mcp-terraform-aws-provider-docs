@@ -76,7 +76,7 @@ fmt:
     @deno run fmt
 
 # 🧪 Run the Deno linter and formatter
-ci:(lint) (fmt) (test)
+ci: (lint-fix) (lint) (fmt) (test) (hooks-run)
     @echo ">>> Running CI checks..."
     @deno run update-deps
 
