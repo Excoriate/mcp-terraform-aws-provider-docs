@@ -1,0 +1,27 @@
+---
+name: "📕 Documentation Issue"
+description: Report an issue in the API Reference documentation or Developer Guide for the MCP AWS Provider Docs server
+title: "(module name): (short issue description)"
+labels: [documentation, needs-triage]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the documentation issue
+      description: A clear and concise description of the documentation problem (missing, incorrect, unclear, etc.).
+    validations:
+      required: true
+  - type: textarea
+    id: links
+    attributes:
+      label: Links
+      description: Include links to affected documentation page(s) or code references.
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://aws.github.io/code-of-conduct).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

@@ -12,7 +12,8 @@ and TypeScript, designed to provide contextual information related to
 - [MCP Server: Terraform AWS Provider Docs](#mcp-server-terraform-aws-provider-docs)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
-  - [Why?](#why)
+    - [What is the Model Context Protocol (MCP) and how does it work?](#what-is-the-model-context-protocol-mcp-and-how-does-it-work)
+    - [Why?](#why)
   - [Tools](#tools)
   - [Getting Started](#getting-started)
     - [Install and Use with Claude Desktop](#install-and-use-with-claude-desktop)
@@ -26,10 +27,11 @@ and TypeScript, designed to provide contextual information related to
     - [Run it directly from JSR](#run-it-directly-from-jsr)
     - [Debugging \& Troubleshooting](#debugging--troubleshooting)
     - [Using Docker](#using-docker-1)
-  - [Version and Metadata Management](#version-and-metadata-management)
   - [Contributing](#contributing)
   - [Security](#security)
   - [License](#license)
+
+
 
 ## Overview
 
@@ -44,9 +46,15 @@ information, such as:
 - ✅ GitHub Issues (opened, closed, and all)
 - ✅ AWS Resources examples
 
+### What is the Model Context Protocol (MCP) and how does it work?
+
+> The Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need.
+>
+> &mdash; [Model Context Protocol README](https://github.com/modelcontextprotocol#:~:text=The%20Model%20Context,context%20they%20need.)
+
 ---
 
-## Why?
+### Why?
 
 When writing IaC, or designing
 [terraform modules](https://www.terraform.io/language/modules), it's often
@@ -201,7 +209,7 @@ for more info.
 ## Developing & Contributing
 
 For more details about debugging, testing, and contributing to this project,
-see [DEVELOPMENT.md](docs/DEVELOPMENT.md), and [CONTRIBUTING.md](docs/CONTRIBUTING.md).
+see [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md), and [CONTRIBUTING](CONTRIBUTING.md).
 
 ### Run it directly from JSR
 
@@ -254,27 +262,10 @@ docker run -it --rm \
 > If you want to use a local `.env` file, you can pass it with
 > `--env-file .env`.
 
-## Version and Metadata Management
-
-When developing and contributing to the project, it's crucial to maintain consistent versioning and metadata across all files. The following table outlines where key metadata attributes are defined and should be kept in sync:
-
-| Metadata Attribute | Value | File Location | Location Details |
-|-------------------|-------|---------------|-----------------|
-| MCP Server Name | `mcp-terraform-aws-provider-docs` | [`README.md`](README.md) | Various references throughout the documentation |
-| MCP Server Name | `mcp-terraform-aws-provider-docs` | [`justfile`](justfile) | `MCP_SERVER_NAME` variable |
-| MCP Server Name | `@excoriate/mcp-terraform-aws-provider-docs` | [`deno.json`](deno.json) | `name` field |
-| MCP Server Name | `mcp-terraform-aws-provider-docs` | [`.github/settings.yml`](.github/settings.yml) | `name` field |
-| MCP Server Name | `mcp-terraform-aws-provider-docs` | [`src/lib/mcp/constants.ts`](src/lib/mcp/constants.ts) | `MCP_SERVER_NAME` constant |
-| MCP Server Version | `0.0.1` | [`deno.json`](deno.json) | `version` field |
-| MCP Server Version | `0.0.1` | [`src/lib/mcp/constants.ts`](src/lib/mcp/constants.ts) | `MCP_SERVER_VERSION` constant |
-
-
-> [!IMPORTANT]
-> Always ensure these values are synchronized across all files when making changes to the project's metadata.
 
 ## Contributing
 
-See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed contribution
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution
 guidelines, including setup, code style, PR process, and codebase structure
 reference.
 

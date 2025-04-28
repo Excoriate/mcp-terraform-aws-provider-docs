@@ -1,0 +1,75 @@
+---
+name: "🐛 Bug Report"
+description: Report a bug in the MCP AWS Provider Docs server
+title: "(module name): (short issue description)"
+labels: [bug, needs-triage]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: What is the problem? A clear and concise description of the bug in the context of the MCP server, AWS provider, or Terragrunt documentation.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Behavior
+      description: What actually happened? Include errors, stack traces, and relevant logs.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: Provide a minimal code sample or repo to reproduce the issue (preferably related to Deno, TypeScript, or Terragrunt).
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Possible Solution
+      description: Suggest a fix or reason for the bug.
+    validations:
+      required: false
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Information/Context
+      description: Anything else that might be relevant for troubleshooting this bug.
+    validations:
+      required: false
+  - type: input
+    id: operating-system
+    attributes:
+      label: OS
+    validations:
+      required: true
+  - type: input
+    id: server-version
+    attributes:
+      label: Server Version
+    validations:
+      required: true
+  - type: input
+    id: mcp-tool
+    attributes:
+      label: MCP Tool
+      description: Specify which MCP tool you are using
+    validations:
+      required: true
+  - type: checkboxes
+    id: code-of-conduct
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://aws.github.io/code-of-conduct).
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
