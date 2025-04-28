@@ -20,6 +20,11 @@ run-dev:
     @echo ">>> Starting development server via 'deno task dev'..."
     @deno task dev
 
+# 🚀 Run the development server using the task defined in deno.json
+run-dev-watch:
+    @echo ">>> Starting development server via 'deno task dev-watch'..."
+    @deno task dev-watch
+
 # 🐳 Run the MCP server in Docker (pass GITHUB_TOKEN as env var) Usage: just run-docker GITHUB_TOKEN=ghp_xxx...
 run-docker:
     @echo ">>> Running MCP server in Docker with provided GITHUB_TOKEN..."
@@ -71,7 +76,7 @@ fmt:
     @deno run fmt
 
 # 🧪 Run the Deno linter and formatter
-ci:(lint) (fmt) (test)
+ci: (lint-fix) (lint) (fmt) (test) (hooks-run)
     @echo ">>> Running CI checks..."
     @deno run update-deps
 
