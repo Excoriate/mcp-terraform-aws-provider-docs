@@ -66,7 +66,8 @@ Success Criteria:
 		properties: {
 			all: {
 				type: "boolean",
-				description: "Controls pagination behavior - when true, fetches all pages of issues; when false, only returns the first page (30 issues)",
+				description:
+					"Controls pagination behavior - when true, fetches all pages of issues; when false, only returns the first page (30 issues)",
 			},
 		},
 	},

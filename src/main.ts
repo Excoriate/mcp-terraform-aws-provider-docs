@@ -10,15 +10,19 @@ import {
 	ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { GitHubAdapter } from "./lib/adapters/github-api.ts";
-import { MCP_SERVER_NAME, MCP_SERVER_VERSION, TERRAFORM_AWS_PROVIDER_REPOSITORY_URI } from "./lib/utils/constants.ts";
+import { formatGhIssuesDataAsTXT } from "./lib/gh/issues.ts";
+import { getAndValidateGithubToken } from "./lib/gh/token.ts";
 import { McpNotificationLogger } from "./lib/mcp/logger-events.ts";
 import { RESOURCES, getResourceByUri } from "./lib/mcp/resources.ts";
 import {
 	TOOLS_ISSUES_GET_OPEN_ISSUES,
 	TOOLS_ISSUES_GET_OPEN_ISSUES_ARGS_SCHEMA,
 } from "./lib/mcp/tools-issues.ts";
-import { getAndValidateGithubToken } from "./lib/gh/token.ts";
-import { formatGhIssuesDataAsTXT } from "./lib/gh/issues.ts";
+import {
+	MCP_SERVER_NAME,
+	MCP_SERVER_VERSION,
+	TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+} from "./lib/utils/constants.ts";
 
 const server = new Server(
 	{
@@ -112,7 +116,10 @@ server.setRequestHandler(
 					);
 
 					// format, and parse gh issues
-					const formattedGhIssues = formatGhIssuesDataAsTXT(issues, TERRAFORM_AWS_PROVIDER_REPOSITORY_URI);
+					const formattedGhIssues = formatGhIssuesDataAsTXT(
+						issues,
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+					);
 
 					// Return the issues as a list of text items
 					return {

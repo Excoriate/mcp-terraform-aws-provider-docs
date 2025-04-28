@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 /**
  * Retrieves and validates a GitHub token from environment variables.
  *

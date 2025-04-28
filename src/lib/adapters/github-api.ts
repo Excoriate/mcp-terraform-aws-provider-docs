@@ -153,7 +153,11 @@ export class GitHubAdapter {
 				});
 				issues = issues.concat(res.data as Issue[]);
 				// Stop if not paginating, or fewer results than perPage, or reached max pages
-				if (!all || res.data.length < perPage || page >= MAX_GITHUB_ISSUES_PAGES) {
+				if (
+					!all ||
+					res.data.length < perPage ||
+					page >= MAX_GITHUB_ISSUES_PAGES
+				) {
 					keepGoing = false;
 				} else {
 					page++;

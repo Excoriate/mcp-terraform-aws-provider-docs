@@ -1,8 +1,6 @@
 import type { Resource } from "@modelcontextprotocol/sdk/types.js";
 import { TERRAFORM_AWS_PROVIDER_REPOSITORY_URI } from "../utils/constants.ts";
 
-
-
 /**
  * List of all resources available to the MCP server.
  */
