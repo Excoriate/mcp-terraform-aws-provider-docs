@@ -30,7 +30,7 @@ jobs:
         run: deno run fmt
 
       - name: 🧪 Run Tests
-        run: deno test
+        run: deno test --allow-env --allow-read --allow-net
 
       # User-friendly summary
       - name: 🎉 CI TypeScript workflow completed successfully
