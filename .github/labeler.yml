@@ -3,18 +3,27 @@
 
 # Label for CI/CD changes
 ci/cd:
-  - .github/workflows/*
+  - changed-files:
+      - any-glob-to-any-file: '.github/workflows/*'
+      - any-glob-to-any-file: 'justfile'
+      - any-glob-to-any-file: 'Dockerfile'
 
 # Label for documentation changes
 documentation:
-  - README.md
-  - docs/**/*.md # Updated path for all docs
-  - "*.md" # Root level markdown files
+  - changed-files:
+      - any-glob-to-any-file: 'README.md'
+      - any-glob-to-any-file: 'docs/**/*.md'
+      - any-glob-to-any-file: 'docs/**/*'
+      - any-glob-to-any-file: '*.md'
 
 # Label for source code changes
 source:
-  - main.ts
-  - "**/*.ts" # All TypeScript files
+  - changed-files:
+      - any-glob-to-any-file: 'src/**/*.ts'
+      - any-glob-to-any-file: 'src/**/*.js'
+      - any-glob-to-any-file: 'src/**/*.json'
+      - any-glob-to-any-file: 'src/**/*.md'
+      - any-glob-to-any-file: 'main.ts'
 
 # Label for configuration changes / patches
 patch:
@@ -30,3 +39,31 @@ patch:
   - .github/*.yml # Other root .github YAML configs
   - .gitignore
   - .gitattributes
+
+scripts:
+  - changed-files:
+      - any-glob-to-any-file: 'scripts/**/*'
+
+config:
+  - changed-files:
+      - any-glob-to-any-file: '.env'
+      - any-glob-to-any-file: '.env.example'
+      - any-glob-to-any-file: 'deno.json'
+      - any-glob-to-any-file: 'deno.lock'
+      - any-glob-to-any-file: 'biome.json'
+      - any-glob-to-any-file: '.nvmrc'
+      - any-glob-to-any-file: '.pre-commit-config.yaml'
+      - any-glob-to-any-file: '.shellcheckrc'
+      - any-glob-to-any-file: '.gitattributes'
+      - any-glob-to-any-file: '.gitignore'
+      - any-glob-to-any-file: '.vscode/**/*'
+
+meta:
+  - changed-files:
+      - any-glob-to-any-file: 'LICENSE'
+      - any-glob-to-any-file: 'SECURITY.md'
+      - any-glob-to-any-file: '.github/labeler.yml'
+      - any-glob-to-any-file: '.github/settings.yml'
+      - any-glob-to-any-file: '.github/ISSUE_TEMPLATE/*'
+      - any-glob-to-any-file: '.github/CODEOWNERS'
+      - any-glob-to-any-file: '.github/*.yml'
