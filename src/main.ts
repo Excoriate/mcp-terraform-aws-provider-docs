@@ -10,15 +10,16 @@ import {
 	ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 import { GitHubAdapter } from "./lib/adapters/github-api.ts";
-import { MCP_SERVER_NAME, MCP_SERVER_VERSION } from "./lib/mcp/constants.ts";
+import { MCP_SERVER_NAME, MCP_SERVER_VERSION, TERRAFORM_AWS_PROVIDER_REPOSITORY_URI } from "./lib/utils/constants.ts";
 import { McpNotificationLogger } from "./lib/mcp/logger-events.ts";
 import { RESOURCES, getResourceByUri } from "./lib/mcp/resources.ts";
-import { TERRAFORM_AWS_PROVIDER_REPOSITORY_URI } from "./lib/mcp/resources.ts";
 import {
 	TOOLS_ISSUES_GET_OPEN_ISSUES,
 	TOOLS_ISSUES_GET_OPEN_ISSUES_ARGS_SCHEMA,
 } from "./lib/mcp/tools-issues.ts";
-import { getAndValidateGithubToken } from "./lib/utils/github-token.ts";
+import { getAndValidateGithubToken } from "./lib/gh/token.ts";
+import { formatGhIssuesDataAsTXT } from "./lib/gh/issues.ts";
+
 const server = new Server(
 	{
 		name: MCP_SERVER_NAME,
@@ -100,19 +101,22 @@ server.setRequestHandler(
 					// extract the validated args
 					const args = argsValidationResult.data;
 
+					// Initialize the GitHub adapter
 					const gh = new GitHubAdapter(ghTokenFromEnv);
 
-					// Specify the repository, state, and all (pagination) arguments
-					const repo = TERRAFORM_AWS_PROVIDER_REPOSITORY_URI; // Replace with your actual repo if needed
-					const state = "open";
-					const all = args.all; // Set to true if you want to paginate through all issues
-					const issues = await gh.listIssuesByState(repo, state, all);
+					// List all open issues
+					const issues = await gh.listIssuesByState(
+						TERRAFORM_AWS_PROVIDER_REPOSITORY_URI,
+						"open",
+						args.all,
+					);
 
+					// format, and parse gh issues
+					const formattedGhIssues = formatGhIssuesDataAsTXT(issues, TERRAFORM_AWS_PROVIDER_REPOSITORY_URI);
+
+					// Return the issues as a list of text items
 					return {
-						content: issues.map((issue) => ({
-							type: "text" as const,
-							text: `#${issue.number}: ${issue.title}`,
-						})),
+						content: formattedGhIssues.content,
 					};
 				} catch (error: unknown) {
 					return {

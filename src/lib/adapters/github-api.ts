@@ -2,7 +2,9 @@
 // Requires: https://esm.sh/@octokit/rest (Octokit for Deno)
 
 import { Octokit } from "https://esm.sh/@octokit/rest@20.0.2";
-import type { Issue } from "../utils/types.ts";
+import type { Issue } from "../gh/issues.ts";
+
+export const MAX_GITHUB_ISSUES_PAGES = 12;
 
 /**
  * GitHubAdapter provides authenticated, reusable methods for interacting with the GitHub API.
@@ -140,6 +142,7 @@ export class GitHubAdapter {
 		let issues = createIssueArray();
 		try {
 			let keepGoing = true;
+			// Limit pages to prevent long-running or infinite pagination (max 10 pages = 1000 issues)
 			while (keepGoing) {
 				const res = await this.octokit.issues.listForRepo({
 					owner,
@@ -149,7 +152,8 @@ export class GitHubAdapter {
 					page,
 				});
 				issues = issues.concat(res.data as Issue[]);
-				if (!all || res.data.length < perPage) {
+				// Stop if not paginating, or fewer results than perPage, or reached max pages
+				if (!all || res.data.length < perPage || page >= MAX_GITHUB_ISSUES_PAGES) {
 					keepGoing = false;
 				} else {
 					page++;
