@@ -27,18 +27,19 @@ source:
 
 # Label for configuration changes / patches
 patch:
-  - LICENSE
-  - justfile # Added
-  - deno.json # Added
-  - deno.lock # Added
-  - .github/labeler.yml
-  - .github/settings.yml
-  - .github/dependabot.yml # Keep if dependabot is used
-  - .github/ISSUE_TEMPLATE/* # Added
-  - .github/CODEOWNERS # Added
-  - .github/*.yml # Other root .github YAML configs
-  - .gitignore
-  - .gitattributes
+  - changed-files:
+      - any-glob-to-any-file: 'LICENSE'
+      - any-glob-to-any-file: 'justfile'
+      - any-glob-to-any-file: 'deno.json'
+      - any-glob-to-any-file: 'deno.lock'
+      - any-glob-to-any-file: '.github/labeler.yml'
+      - any-glob-to-any-file: '.github/settings.yml'
+      - any-glob-to-any-file: '.github/dependabot.yml'
+      - any-glob-to-any-file: '.github/ISSUE_TEMPLATE/*'
+      - any-glob-to-any-file: '.github/CODEOWNERS'
+      - any-glob-to-any-file: '.github/*.yml'
+      - any-glob-to-any-file: '.gitignore'
+      - any-glob-to-any-file: '.gitattributes'
 
 scripts:
   - changed-files:
@@ -67,3 +68,16 @@ meta:
       - any-glob-to-any-file: '.github/ISSUE_TEMPLATE/*'
       - any-glob-to-any-file: '.github/CODEOWNERS'
       - any-glob-to-any-file: '.github/*.yml'
+
+feature:
+ - head-branch: ['^feature', 'feature']
+
+fix:
+ - head-branch: ['^fix', 'fix']
+
+ci:
+ - head-branch: ['^ci', 'ci']
+
+refactor:
+ - head-branch: ['^refactor', 'refactor']
+
