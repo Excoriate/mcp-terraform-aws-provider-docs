@@ -12,6 +12,7 @@
 		"@biomejs/biome": "npm:@biomejs/biome@^1.9.4",
 		"@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.10.2",
 		"@std/assert": "jsr:@std/assert@^1.0.13",
+		"@std/yaml": "jsr:@std/yaml@^1.0.6",
 		"zod": "npm:zod@^3.24.3"
 	},
 	"permissions": {

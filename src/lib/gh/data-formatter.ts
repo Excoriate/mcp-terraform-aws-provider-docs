@@ -168,3 +168,42 @@ export function formatGhReleaseWithIssuesDataAsTXT(
 		text: [releaseContent, issuesContent].filter(Boolean).join("\n"),
 	};
 }
+
+/**
+ * Formats an array of AWS resource documentation metadata into LLM-optimized text blocks.
+ *
+ * @param resources - Array of resource metadata objects
+ * @returns Object containing an array of formatted content items, one per resource
+ */
+export function formatAwsResourceDocsAsTXT(
+	resources: Array<{
+		id: string;
+		subcategory: string;
+		page_title: string;
+		description: string;
+		resource: string;
+		resource_description: string;
+		source: string;
+		file_path: string;
+	}>,
+): { content: { type: "text"; text: string }[] } {
+	return {
+		content: resources.map((res) => {
+			const lines = [
+				"----------------------------------------",
+				`ID:                  ${res.id}`,
+				`SUBCATEGORY:         ${res.subcategory}`,
+				`PAGE_TITLE:          ${res.page_title}`,
+				`DESCRIPTION:         ${res.description}`,
+				`RESOURCE:            ${res.resource}`,
+				`RESOURCE_DESCRIPTION:${res.resource_description}`,
+				`SOURCE:              ${res.source}`,
+				`FILE_PATH:           ${res.file_path}`,
+			];
+			return {
+				type: "text",
+				text: lines.join("\n"),
+			};
+		}),
+	};
+}

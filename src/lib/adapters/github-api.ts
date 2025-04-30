@@ -68,26 +68,56 @@ export class GitHubAdapter {
 	}
 
 	/**
-	 * List files in a given repository and path (folder).
+	 * List files in a given repository and path (folder), supporting pagination for large directories.
 	 * @param repo - Repository in 'owner/repo' format
 	 * @param path - Path within the repository (e.g. 'docs/')
 	 * @returns Array of file/folder names (strings)
+	 *
+	 * This method will fetch all pages of results if the directory contains more than 1000 files.
+	 * Throws an error if the API returns an HTML error page or unexpected response.
 	 */
 	async listFiles(repo: string, path: string): Promise<string[]> {
 		const [owner, repoName] = this.#parseRepo(repo);
+		let files: string[] = [];
+		let page = 1;
+		const perPage = 100;
+		let keepGoing = true;
 		try {
-			const res = await this.octokit.repos.getContent({
-				owner,
-				repo: repoName,
-				path,
-			});
-			if (Array.isArray(res.data)) {
-				return res.data.map((item) =>
-					typeof item.name === "string" ? item.name : "",
+			while (keepGoing) {
+				const res = await this.octokit.repos.getContent({
+					owner,
+					repo: repoName,
+					path,
+					per_page: perPage,
+					page,
+				});
+				if (Array.isArray(res.data)) {
+					files = files.concat(
+						res.data.map((item) =>
+							typeof item.name === "string" ? item.name : "",
+						),
+					);
+					if (res.data.length < perPage) {
+						keepGoing = false;
+					} else {
+						page++;
+					}
+				} else {
+					throw new Error(`Path '${path}' is not a directory in ${repo}`);
+				}
+			}
+			return files;
+		} catch (err: unknown) {
+			// Detect HTML error page (e.g., rate limit or server error)
+			if (
+				err instanceof Error &&
+				err.message &&
+				err.message.includes("<!DOCTYPE html>")
+			) {
+				throw new Error(
+					"listFiles: Received HTML error page from GitHub API. Possible rate limit or server error.",
 				);
 			}
-			throw new Error(`Path '${path}' is not a directory in ${repo}`);
-		} catch (err: unknown) {
 			if (err instanceof Error) {
 				throw new Error(`listFiles: ${err.message}`);
 			}
