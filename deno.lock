@@ -10,6 +10,7 @@
     "jsr:@std/http@1": "1.0.13",
     "jsr:@std/internal@^1.0.6": "1.0.6",
     "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@std/yaml@^1.0.6": "1.0.6",
     "npm:@biomejs/biome@*": "1.9.4",
     "npm:@biomejs/biome@^1.9.4": "1.9.4",
     "npm:@modelcontextprotocol/sdk@^1.10.2": "1.10.2_express@5.1.0_zod@3.24.3",
@@ -43,6 +44,9 @@
     },
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
+    },
+    "@std/yaml@1.0.6": {
+      "integrity": "c9a5a914e1d51c46756cb10e356710035cfa905e713c90d3b711413fd3aead27"
     }
   },
   "npm": {
@@ -564,6 +568,7 @@
     "https://esm.sh/@octokit/plugin-request-log@^4.0.0?target=denonext": "https://esm.sh/@octokit/plugin-request-log@4.0.1?target=denonext",
     "https://esm.sh/@octokit/plugin-rest-endpoint-methods@^10.0.0?target=denonext": "https://esm.sh/@octokit/plugin-rest-endpoint-methods@10.4.1?target=denonext",
     "https://esm.sh/@octokit/request-error@^5.1.1?target=denonext": "https://esm.sh/@octokit/request-error@5.1.1?target=denonext",
+    "https://esm.sh/@octokit/request@^8.0.1?target=denonext": "https://esm.sh/@octokit/request@8.4.1?target=denonext",
     "https://esm.sh/@octokit/request@^8.4.1?target=denonext": "https://esm.sh/@octokit/request@8.4.1?target=denonext",
     "https://esm.sh/@types/once@~1.4.5/index.d.ts": "https://esm.sh/@types/once@1.4.5/index.d.ts",
     "https://esm.sh/before-after-hook@^2.2.0?target=denonext": "https://esm.sh/before-after-hook@2.2.3?target=denonext",
@@ -653,6 +658,8 @@
     "https://esm.sh/@octokit/core@5.2.1?target=denonext": "e6f40fa2a28e0bfb77105e21463912fa6bc3234b0bde6d7271505b5cfa5ecc56",
     "https://esm.sh/@octokit/endpoint@9.0.6/denonext/endpoint.mjs": "bb7b60907ae7ff8bd6d4c1cf7de732e52e9e79aae24fc7135c35b14297867568",
     "https://esm.sh/@octokit/endpoint@9.0.6?target=denonext": "b08186f1719117be55cf159d333454711be2a852b4bade2963428328794ef5fe",
+    "https://esm.sh/@octokit/graphql@7.0.2": "24f5aa5d9ad7e28eceb41aff41c9494a1ab9fb93b6449aebbaafae0372853dc9",
+    "https://esm.sh/@octokit/graphql@7.0.2/denonext/graphql.mjs": "10e3beb6802f418d64d2697621b6faa59c2cf5d8a88335539ffd7f539795e428",
     "https://esm.sh/@octokit/graphql@7.1.1/denonext/graphql.mjs": "1980a363e8ed1df2db32f7b82e48c4d87a017a0f8e07702452e11cdf6307d6fb",
     "https://esm.sh/@octokit/graphql@7.1.1?target=denonext": "b2ce42fec5d1b41e740c4f66fdbe3de7d1486472cf9647b531aaf5c5b56c8b62",
     "https://esm.sh/@octokit/plugin-paginate-rest@9.2.2/denonext/plugin-paginate-rest.mjs": "0b6b7fa8f163ebbccc44929f31dfeb59352b883f81ec9a66dbee7d9414eb4c73",
@@ -681,6 +688,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@^1.0.13",
+      "jsr:@std/yaml@^1.0.6",
       "npm:@biomejs/biome@^1.9.4",
       "npm:@modelcontextprotocol/sdk@^1.10.2",
       "npm:zod@^3.24.3"

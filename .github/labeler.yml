@@ -3,30 +3,44 @@
 
 # Label for CI/CD changes
 ci/cd:
-  - .github/workflows/*
+  - changed-files:
+      - any-glob-to-any-file: ['.github/workflows/*', 'justfile', 'Dockerfile']
 
 # Label for documentation changes
 documentation:
-  - README.md
-  - docs/**/*.md # Updated path for all docs
-  - "*.md" # Root level markdown files
+  - changed-files:
+      - any-glob-to-any-file: ['README.md', 'docs/**/*.md', 'docs/**/*', '*.md']
 
 # Label for source code changes
 source:
-  - main.ts
-  - "**/*.ts" # All TypeScript files
+  - changed-files:
+      - any-glob-to-any-file: ['src/**/*.ts', 'src/**/*.js', 'src/**/*.json', 'src/**/*.md', 'main.ts']
 
 # Label for configuration changes / patches
 patch:
-  - LICENSE
-  - justfile # Added
-  - deno.json # Added
-  - deno.lock # Added
-  - .github/labeler.yml
-  - .github/settings.yml
-  - .github/dependabot.yml # Keep if dependabot is used
-  - .github/ISSUE_TEMPLATE/* # Added
-  - .github/CODEOWNERS # Added
-  - .github/*.yml # Other root .github YAML configs
-  - .gitignore
-  - .gitattributes
+  - changed-files:
+      - any-glob-to-any-file: ['LICENSE', 'justfile', 'deno.json', 'deno.lock', '.github/labeler.yml', '.github/settings.yml', '.github/dependabot.yml', '.github/ISSUE_TEMPLATE/*', '.github/CODEOWNERS', '.github/*.yml', '.gitignore', '.gitattributes']
+
+scripts:
+  - changed-files:
+      - any-glob-to-any-file: ['scripts/**/*']
+
+config:
+  - changed-files:
+      - any-glob-to-any-file: ['.env', '.env.example', 'deno.json', 'deno.lock', 'biome.json', '.nvmrc', '.pre-commit-config.yaml', '.shellcheckrc', '.gitattributes', '.gitignore', '.vscode/**/*']
+
+meta:
+  - changed-files:
+      - any-glob-to-any-file: ['LICENSE', 'SECURITY.md', '.github/labeler.yml', '.github/settings.yml', '.github/ISSUE_TEMPLATE/*', '.github/CODEOWNERS', '.github/*.yml']
+
+feature:
+ - head-branch: ['^feature', 'feature']
+
+fix:
+ - head-branch: ['^fix', 'fix']
+
+ci:
+ - head-branch: ['^ci', 'ci']
+
+refactor:
+ - head-branch: ['^refactor', 'refactor']

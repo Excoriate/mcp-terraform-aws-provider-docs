@@ -1,0 +1,51 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# MCP Tool Definition Rule
+
+## Canonical Example
+
+See [tools-issues.ts](mdc:src/lib/mcp/tools-issues.ts) for a complete, high-quality MCP tool definition.
+
+## Required Structure for All MCP Tools
+
+Every MCP tool must be defined as a JavaScript object with the following fields:
+
+- `name`: A unique, descriptive string identifier for the tool.
+- `description`: A **multiline template string** (using backticks) containing a plain-text, sectioned, and indented description. **Do not use markdown or code block syntax inside the content.** The description must be readable in code and must include the following sections, in order:
+  - **Purpose**: What the tool does and why it exists.
+  - **When to Use**: Actionable scenarios for LLMs and users.
+  - **Arguments**: List each argument, its type, and its effect. For booleans, clarify behavior for true/false. For pagination or filtering, be explicit.
+  - **Output Format**: Describe the structure and fields of the output, including types and any formatting conventions.
+  - **Edge Case Handling**: Explicitly document all edge cases (empty results, pagination, missing fields, authentication errors, etc.).
+  - **Integration and Chaining**: How this tool can be combined with other tools or workflows.
+  - **Example Usage**: At least two example invocations, formatted as plain text (not JSON or markdown).
+  - **Success Criteria**: List the conditions for correct and robust tool behavior.
+- `inputSchema`: An explicit schema object describing all accepted arguments, with each field’s description clarifying its behavior and effect.
+
+## Formatting and Content Requirements
+
+- Use a **multiline template string** for the description. Do not use markdown, code blocks, or backticks inside the content.
+- Indent and line-break sections for maximum readability in code.
+- All field names and values in the description should be plain text.
+- Argument descriptions must clarify the effect of each value (e.g., “Controls pagination behavior - when true, fetches all pages of issues; when false, only returns the first page (30 issues)”).
+- Output format must list all fields, types, and any special formatting or conventions.
+- Edge case handling is **mandatory** and must be explicit.
+- Example usage must be included as plain text, not as markdown or code blocks.
+
+## Checklist for New MCP Tools
+
+- [ ] Tool object includes `name`, `description` (multiline template string), and `inputSchema`.
+- [ ] Description includes all required sections, in order, with clear indentation and line breaks.
+- [ ] No markdown, code blocks, or backticks inside the description content.
+- [ ] All arguments and output fields are fully described, with types and effects.
+- [ ] Edge cases are explicitly documented.
+- [ ] At least two example usages are included as plain text.
+- [ ] Success criteria are listed at the end of the description.
+- [ ] Argument schema fields have clear, actionable descriptions.
+
+## Reference
+
+For a canonical implementation, see [tools-issues.ts](mdc:src/lib/mcp/tools-issues.ts).

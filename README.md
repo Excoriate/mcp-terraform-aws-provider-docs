@@ -12,7 +12,8 @@ and TypeScript, designed to provide contextual information related to
 - [MCP Server: Terraform AWS Provider Docs](#mcp-server-terraform-aws-provider-docs)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
-  - [Why?](#why)
+    - [What is the Model Context Protocol (MCP) and how does it work?](#what-is-the-model-context-protocol-mcp-and-how-does-it-work)
+    - [Why?](#why)
   - [Tools](#tools)
   - [Getting Started](#getting-started)
     - [Install and Use with Claude Desktop](#install-and-use-with-claude-desktop)
@@ -26,10 +27,11 @@ and TypeScript, designed to provide contextual information related to
     - [Run it directly from JSR](#run-it-directly-from-jsr)
     - [Debugging \& Troubleshooting](#debugging--troubleshooting)
     - [Using Docker](#using-docker-1)
-  - [Version and Metadata Management](#version-and-metadata-management)
   - [Contributing](#contributing)
   - [Security](#security)
   - [License](#license)
+
+
 
 ## Overview
 
@@ -44,9 +46,15 @@ information, such as:
 - ✅ GitHub Issues (opened, closed, and all)
 - ✅ AWS Resources examples
 
+### What is the Model Context Protocol (MCP) and how does it work?
+
+> The Model Context Protocol (MCP) is an open protocol that enables seamless integration between LLM applications and external data sources and tools. Whether you're building an AI-powered IDE, enhancing a chat interface, or creating custom AI workflows, MCP provides a standardized way to connect LLMs with the context they need.
+>
+> &mdash; [Model Context Protocol README](https://github.com/modelcontextprotocol#:~:text=The%20Model%20Context,context%20they%20need.)
+
 ---
 
-## Why?
+### Why?
 
 When writing IaC, or designing
 [terraform modules](https://www.terraform.io/language/modules), it's often
@@ -70,9 +78,13 @@ submit an
 [issue](https://github.com/Excoriate/mcp-terraform-aws-provider/issues) or
 [PR](https://github.com/Excoriate/mcp-terraform-aws-provider/pulls)):
 
-| Tool Name             | Purpose                                                           | Inputs                  | Outputs                                                                                                                                                             | Use Case                                                                                                                                                                                                                                            |
-| --------------------- | ----------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `get-all-open-issues` | Retrieve all open issues from Terraform AWS Provider GitHub repo. | all (boolean, optional) | Array of objects with `title` (string), `number` (number), `state` (string), `created_at` (string), `updated_at` (string), `body` (string), and `labels` (string[]) | Use when you need to track or analyze current issues in the Terraform AWS Provider project, such as when building an issue dashboard, performing issue triage, or when you need to stay updated with the latest project challenges and discussions. |
+| Tool Name              | Purpose                                                                 | Inputs                                                                 | Outputs                                                                                                                        | Use Case                                                                                                                                                                                                                                            |
+|------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `get-open-issues`      | Retrieve open issues from Terraform AWS Provider GitHub repo             | `all` (boolean, optional): Retrieve all or first 30 issues             | Array of issue objects with ID, title, description, source, state, user, labels, creation/update timestamps, comments           | Analyze, triage, or report on current open issues. Build dashboards, correlate issues with documentation, understand if a Terraform behavior is expected or related to a known issue.                                                               |
+| `get-issue`            | Fetch detailed information for a specific GitHub issue                   | `issueNumber` (number, required): Exact GitHub issue number            | Detailed issue object with full metadata including body, timestamps, labels, comments                                          | Investigate a specific issue in detail, typically used after `get-open-issues` to obtain comprehensive information about a single issue of interest.                                                         |
+| `list-all-releases`    | Retrieve all releases from the Terraform AWS Provider GitHub repo        | None                                                                   | Array of release objects with ID, tag, name, author, published date, URL, asset count, and summary body                        | List all available versions/releases, build dashboards, changelogs, or analytics, correlate provider versions with documentation, issues, or upgrade guides.                                                  |
+| `get-release-by-tag`   | Fetch detailed information for a specific release by tag                 | `tag` (string, required): Release tag (e.g. 'v5.96.0')<br>`include_issues` (boolean, optional): Also fetch referenced issues | Release object with full metadata and, if `include_issues` is true, details for all referenced issues in the release notes     | Investigate a particular version in depth, including referenced issues. Use after `list-all-releases` or directly if the tag is known.                                                                      |
+| `get-latest-release`   | Fetch detailed information for the latest release                        | `include_issues` (boolean, optional): Also fetch referenced issues     | Latest release object with full metadata and, if `include_issues` is true, details for all referenced issues in the release notes | Quickly access the most recent version, check for new features or bug fixes, and optionally see referenced issues.                                                                                           |
 
 ## Getting Started
 
@@ -201,7 +213,7 @@ for more info.
 ## Developing & Contributing
 
 For more details about debugging, testing, and contributing to this project,
-see [DEVELOPMENT.md](docs/DEVELOPMENT.md), and [CONTRIBUTING.md](docs/CONTRIBUTING.md).
+see [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md), and [CONTRIBUTING](CONTRIBUTING.md).
 
 ### Run it directly from JSR
 
@@ -254,27 +266,10 @@ docker run -it --rm \
 > If you want to use a local `.env` file, you can pass it with
 > `--env-file .env`.
 
-## Version and Metadata Management
-
-When developing and contributing to the project, it's crucial to maintain consistent versioning and metadata across all files. The following table outlines where key metadata attributes are defined and should be kept in sync:
-
-| Metadata Attribute | Value | File Location | Location Details |
-|-------------------|-------|---------------|-----------------|
-| MCP Server Name | `mcp-terraform-aws-provider-docs` | [`README.md`](README.md) | Various references throughout the documentation |
-| MCP Server Name | `mcp-terraform-aws-provider-docs` | [`justfile`](justfile) | `MCP_SERVER_NAME` variable |
-| MCP Server Name | `@excoriate/mcp-terraform-aws-provider-docs` | [`deno.json`](deno.json) | `name` field |
-| MCP Server Name | `mcp-terraform-aws-provider-docs` | [`.github/settings.yml`](.github/settings.yml) | `name` field |
-| MCP Server Name | `mcp-terraform-aws-provider-docs` | [`src/lib/mcp/constants.ts`](src/lib/mcp/constants.ts) | `MCP_SERVER_NAME` constant |
-| MCP Server Version | `0.0.1` | [`deno.json`](deno.json) | `version` field |
-| MCP Server Version | `0.0.1` | [`src/lib/mcp/constants.ts`](src/lib/mcp/constants.ts) | `MCP_SERVER_VERSION` constant |
-
-
-> [!IMPORTANT]
-> Always ensure these values are synchronized across all files when making changes to the project's metadata.
 
 ## Contributing
 
-See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed contribution
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution
 guidelines, including setup, code style, PR process, and codebase structure
 reference.
 

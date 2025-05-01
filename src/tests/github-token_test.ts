@@ -2,7 +2,7 @@ import { assertEquals, assertThrows } from "jsr:@std/assert";
 import {
 	GitHubTokenSchema,
 	getAndValidateGithubToken,
-} from "../lib/utils/github-token.ts";
+} from "../lib/gh/token.ts";
 
 Deno.test("GitHubTokenSchema: valid token passes validation", () => {
 	const validToken = "ghp_abcdefghijklmnopqrstuvwxyz123456";
