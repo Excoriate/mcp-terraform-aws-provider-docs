@@ -11,6 +11,7 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { GitHubAdapter } from "./lib/adapters/github-api.ts";
 import type { Issue } from "./lib/adapters/github-api.ts";
+import { listLocalAwsResourceDocsWithMetadata } from "./lib/adapters/local-docs-api.ts";
 import {
 	formatAwsResourceDocAsTXT,
 	formatAwsResourceDocsAsTXT,
@@ -18,10 +19,22 @@ import {
 import { formatGhIssuesDataAsTXT } from "./lib/gh/data-formatter.ts";
 import { formatGhReleasesDataAsTXT } from "./lib/gh/data-formatter.ts";
 import { formatGhReleaseWithIssuesDataAsTXT } from "./lib/gh/data-formatter.ts";
+import {
+	formatAwsDatasourceDocAsTXT,
+	formatAwsDatasourceDocsAsTXT,
+} from "./lib/gh/data-formatter.ts";
 import { getAndValidateGithubToken } from "./lib/gh/token.ts";
 import { McpNotificationLogger } from "./lib/mcp/logger-events.ts";
 import { RESOURCES, getResourceByUri } from "./lib/mcp/resources.ts";
-import { listLocalAwsResourceDocsWithMetadata } from "./lib/adapters/local-docs-api.ts";
+import {
+	TOOLS_DATASOURCES_GET_DATASOURCE_DOC,
+	TOOLS_DATASOURCES_GET_DATASOURCE_DOC_ARGS_SCHEMA,
+	TOOLS_DATASOURCES_LIST_DATASOURCES,
+	TOOLS_DATASOURCES_LIST_DATASOURCES_ARGS_SCHEMA,
+	getDatasourceDocFromFileName,
+	listDatasourcesWithMetadata,
+	resolveDatasourceDocFileNameFromAWSDatasourceName,
+} from "./lib/mcp/tools-datasources.ts";
 import {
 	TOOLS_ISSUES_GET_ISSUE,
 	TOOLS_ISSUES_GET_ISSUE_ARGS_SCHEMA,
@@ -42,6 +55,7 @@ import {
 	TOOLS_RESOURCES_LIST_RESOURCES,
 	TOOLS_RESOURCES_LIST_RESOURCES_ARGS_SCHEMA,
 	getResourceDocFromFileName,
+	resolveResourceDocFileNameFromAWSResourceName,
 } from "./lib/mcp/tools-resources.ts";
 import {
 	MCP_SERVER_NAME,
@@ -91,6 +105,8 @@ server.setRequestHandler(ListToolsRequestSchema, () => ({
 		TOOLS_RELEASES_GET_LATEST,
 		TOOLS_RESOURCES_LIST_RESOURCES,
 		TOOLS_RESOURCES_GET_RESOURCE_DOC,
+		TOOLS_DATASOURCES_LIST_DATASOURCES,
+		TOOLS_DATASOURCES_GET_DATASOURCE_DOC,
 	],
 }));
 
@@ -432,28 +448,157 @@ server.setRequestHandler(
 						};
 					}
 
-					// const { aws_resource, file_name } = argsValidationResult.data;
-					const { file_name } = argsValidationResult.data;
+					const { aws_resource, file_name } = argsValidationResult.data;
 
 					if (file_name) {
 						const result = await getResourceDocFromFileName(file_name);
-
 						if ("type" in result && result.type === "text") {
 							return { content: [result] };
 						}
-
 						// At this point, result is { content, markdown }
-						const { markdown } = result as Exclude<
+						const { markdown, content } = result as Exclude<
 							typeof result,
 							{ type: string; text: string }
 						>;
-						const formatted = formatAwsResourceDocAsTXT(markdown);
+						const formatted = formatAwsResourceDocAsTXT(markdown, content);
 						return { content: [formatted] };
 					}
 
+					if (aws_resource) {
+						const fileNameByAWSResourceName =
+							await resolveResourceDocFileNameFromAWSResourceName(aws_resource);
+						if (
+							"type" in fileNameByAWSResourceName &&
+							fileNameByAWSResourceName.type === "text"
+						) {
+							// If the resolver returns an error, propagate it
+							if (fileNameByAWSResourceName.text.startsWith("Error:")) {
+								return { content: [fileNameByAWSResourceName] };
+							}
+							// Otherwise, treat the text as the file path
+							const result = await getResourceDocFromFileName(
+								fileNameByAWSResourceName.text,
+							);
+							if ("type" in result && result.type === "text") {
+								return { content: [result] };
+							}
+							// At this point, result is { content, markdown }
+							const { markdown, content } = result as Exclude<
+								typeof result,
+								{ type: string; text: string }
+							>;
+							const formatted = formatAwsResourceDocAsTXT(markdown, content);
+							return { content: [formatted] };
+						}
+					}
+
+					// If neither file_name nor aws_resource is provided, return an error
 					return {
 						content: [
-							{ type: "text", text: "Error: file_name must be provided." },
+							{
+								type: "text",
+								text: "Error: file_name or aws_resource must be provided.",
+							},
+						],
+					};
+				} catch (error: unknown) {
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: `Error: ${error instanceof Error ? error.message : String(error)}`,
+							},
+						],
+					};
+				}
+			case TOOLS_DATASOURCES_LIST_DATASOURCES.name:
+				try {
+					const argsValidationResult =
+						TOOLS_DATASOURCES_LIST_DATASOURCES_ARGS_SCHEMA.safeParse(toolArgs);
+					if (!argsValidationResult.success) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: `Invalid arguments: ${argsValidationResult.error.message}`,
+								},
+							],
+						};
+					}
+					const datasources = await listDatasourcesWithMetadata();
+					const formatted = formatAwsDatasourceDocsAsTXT(datasources).content;
+					return { content: formatted };
+				} catch (error: unknown) {
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: `Error handling ${TOOLS_DATASOURCES_LIST_DATASOURCES.name}: ${error instanceof Error ? error.message : String(error)}`,
+							},
+						],
+					};
+				}
+			case TOOLS_DATASOURCES_GET_DATASOURCE_DOC.name:
+				try {
+					const argsValidationResult =
+						TOOLS_DATASOURCES_GET_DATASOURCE_DOC_ARGS_SCHEMA.safeParse(
+							toolArgs,
+						);
+					if (!argsValidationResult.success) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: `Invalid arguments: ${argsValidationResult.error.message}`,
+								},
+							],
+						};
+					}
+					const { aws_datasource, file_name } = argsValidationResult.data;
+					if (file_name) {
+						const result = await getDatasourceDocFromFileName(file_name);
+						if ("type" in result && result.type === "text") {
+							return { content: [result] };
+						}
+						const { markdown, content } = result as Exclude<
+							typeof result,
+							{ type: string; text: string }
+						>;
+						const formatted = formatAwsDatasourceDocAsTXT(markdown, content);
+						return { content: [formatted] };
+					}
+					if (aws_datasource) {
+						const fileNameByAWSDatasourceName =
+							await resolveDatasourceDocFileNameFromAWSDatasourceName(
+								aws_datasource,
+							);
+						if (
+							"type" in fileNameByAWSDatasourceName &&
+							fileNameByAWSDatasourceName.type === "text"
+						) {
+							if (fileNameByAWSDatasourceName.text.startsWith("Error:")) {
+								return { content: [fileNameByAWSDatasourceName] };
+							}
+							const result = await getDatasourceDocFromFileName(
+								fileNameByAWSDatasourceName.text,
+							);
+							if ("type" in result && result.type === "text") {
+								return { content: [result] };
+							}
+							const { markdown, content } = result as Exclude<
+								typeof result,
+								{ type: string; text: string }
+							>;
+							const formatted = formatAwsDatasourceDocAsTXT(markdown, content);
+							return { content: [formatted] };
+						}
+					}
+					return {
+						content: [
+							{
+								type: "text",
+								text: "Error: file_name or aws_datasource must be provided.",
+							},
 						],
 					};
 				} catch (error: unknown) {

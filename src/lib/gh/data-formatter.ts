@@ -336,18 +336,22 @@ export function parseAwsResourceDocMarkdown(
  * Formats a single AWS resource documentation metadata object into an LLM-optimized text block.
  *
  * @param res - Resource metadata object (as returned by parseAwsResourceDocMarkdown)
+ * @param fullMarkdownBody - (optional) The full markdown body of the document
  * @returns Object with { type: 'text', text: string }
  */
-export function formatAwsResourceDocAsTXT(res: {
-	id: string;
-	subcategory: string;
-	page_title: string;
-	description: string;
-	resource: string;
-	resource_description: string;
-	source: string;
-	file_path: string;
-}): { type: "text"; text: string } {
+export function formatAwsResourceDocAsTXT(
+	res: {
+		id: string;
+		subcategory: string;
+		page_title: string;
+		description: string;
+		resource: string;
+		resource_description: string;
+		source: string;
+		file_path: string;
+	},
+	fullMarkdownBody?: string,
+): { type: "text"; text: string } {
 	const lines = [
 		"----------------------------------------",
 		`ID:                   ${res.id}`,
@@ -360,8 +364,203 @@ export function formatAwsResourceDocAsTXT(res: {
 		`FILE_PATH:            ${res.file_path}`,
 		`FILE_PATH_REMOTE_GIT: ${`${TERRAFORM_AWS_PROVIDER_REPOSITORY_URL}/website/docs/r/${res.file_path.split("/").pop()}`}`,
 	];
+	let text = lines.join("\n");
+	if (fullMarkdownBody) {
+		text += `\n\n----------------------------------------\nFULL_MARKDOWN_BODY:\n${fullMarkdownBody}`;
+	}
 	return {
 		type: "text",
-		text: lines.join("\n"),
+		text,
+	};
+}
+
+/**
+ * Formats multiple AWS resource documentation files (markdown content) into a single merged, LLM-optimized text block.
+ * Each document is parsed and formatted with metadata and clear separators.
+ *
+ * @param docs - Array of { content: string, file_path: string }
+ * @returns { type: 'text', text: string } - Single merged, formatted response
+ */
+export function formatAwsResourceDocsMergedAsTXT(
+	docs: Array<{ content: string; file_path: string }>,
+): { type: "text"; text: string } {
+	const formattedDocs: string[] = [];
+	for (const doc of docs) {
+		const metadata = parseAwsResourceDocMarkdown(doc.content, doc.file_path);
+		const formatted = formatAwsResourceDocAsTXT(metadata, doc.content);
+		formattedDocs.push(formatted.text);
+	}
+	return {
+		type: "text",
+		text: formattedDocs.join("\n\n----------------------------------------\n"),
+	};
+}
+
+/**
+ * Parses a single AWS datasource doc markdown file (frontmatter and headings) and returns metadata.
+ *
+ * @param content - The markdown content of the datasource doc
+ * @param file_path - The file path (for source field)
+ * @returns Metadata object with id, subcategory, page_title, description, datasource, datasource_description, source, file_path
+ */
+export function parseAwsDatasourceDocMarkdown(
+	content: string,
+	file_path: string,
+): {
+	id: string;
+	subcategory: string;
+	page_title: string;
+	description: string;
+	datasource: string;
+	datasource_description: string;
+	source: string;
+	file_path: string;
+} {
+	// Extract YAML frontmatter
+	let yamlBlock = "";
+	let yamlObj: unknown = {};
+	let yamlMalformed = false;
+	if (content.startsWith("---")) {
+		const endIdx = content.indexOf("---", 3);
+		if (endIdx !== -1) {
+			yamlBlock = content.slice(3, endIdx).trim();
+			try {
+				yamlObj = parseYaml(yamlBlock) || {};
+			} catch {
+				yamlMalformed = true;
+			}
+		} else {
+			yamlMalformed = true;
+		}
+	}
+	// Extract fields from YAML
+	let subcategory = "(missing)";
+	let page_title = "(missing)";
+	let description = "(missing)";
+	if (!yamlMalformed && typeof yamlObj === "object" && yamlObj !== null) {
+		const y = yamlObj as Record<string, unknown>;
+		if (typeof y.subcategory === "string") subcategory = y.subcategory;
+		if (typeof y.page_title === "string") page_title = y.page_title;
+		if (typeof y.description === "string") description = y.description;
+	} else if (yamlMalformed) {
+		subcategory = "(malformed)";
+		page_title = "(malformed)";
+		description = "(malformed)";
+	}
+	// Extract # Data Source: heading and first paragraph
+	let datasource = "(missing)";
+	let datasource_description = "(missing)";
+	let id = "(missing)";
+	const datasourceMatch = content.match(/^# Data Source: ([^\n]+)$/m);
+	if (datasourceMatch) {
+		datasource = datasourceMatch[1].trim();
+		id = datasource;
+		// Find the paragraph after the heading
+		const afterHeading = content.split(datasourceMatch[0])[1] || "";
+		const paraMatch = afterHeading.match(/\n\s*([\s\S]+?)(\n{2,}|$)/);
+		if (paraMatch) {
+			datasource_description = paraMatch[1].replace(/\n/g, " ").trim();
+		}
+	} else {
+		// fallback: use filename as id
+		id =
+			file_path
+				.split("/")
+				.pop()
+				?.replace(/\.html\.markdown$/, "") || "(missing)";
+	}
+	// Build source (relative path)
+	const source = file_path;
+	return {
+		id,
+		subcategory,
+		page_title,
+		description,
+		datasource,
+		datasource_description,
+		source,
+		file_path,
+	};
+}
+
+/**
+ * Formats a single AWS datasource documentation metadata object into an LLM-optimized text block.
+ *
+ * @param res - Datasource metadata object (as returned by parseAwsDatasourceDocMarkdown)
+ * @param fullMarkdownBody - (optional) The full markdown body of the document
+ * @returns Object with { type: 'text', text: string }
+ */
+export function formatAwsDatasourceDocAsTXT(
+	res: {
+		id: string;
+		subcategory: string;
+		page_title: string;
+		description: string;
+		datasource: string;
+		datasource_description: string;
+		source: string;
+		file_path: string;
+	},
+	fullMarkdownBody?: string,
+): { type: "text"; text: string } {
+	const lines = [
+		"----------------------------------------",
+		`ID:                   ${res.id}`,
+		`SUBCATEGORY:          ${res.subcategory}`,
+		`PAGE_TITLE:           ${res.page_title}`,
+		`DESCRIPTION:          ${res.description}`,
+		`DATASOURCE:           ${res.datasource}`,
+		`DATASOURCE_DESCRIPTION: ${res.datasource_description}`,
+		`SOURCE:               ${res.source}`,
+		`FILE_PATH:            ${res.file_path}`,
+		`FILE_PATH_REMOTE_GIT: ${`${TERRAFORM_AWS_PROVIDER_REPOSITORY_URL}/website/docs/d/${res.file_path.split("/").pop()}`}`,
+	];
+	let text = lines.join("\n");
+	if (fullMarkdownBody) {
+		text += `\n\n----------------------------------------\nFULL_MARKDOWN_BODY:\n${fullMarkdownBody}`;
+	}
+	return {
+		type: "text",
+		text,
+	};
+}
+
+/**
+ * Formats an array of AWS datasource documentation metadata into LLM-optimized text blocks.
+ *
+ * @param datasources - Array of datasource metadata objects
+ * @returns Object containing an array of formatted content items, one per datasource
+ */
+export function formatAwsDatasourceDocsAsTXT(
+	datasources: Array<{
+		id: string;
+		subcategory: string;
+		page_title: string;
+		description: string;
+		datasource: string;
+		datasource_description: string;
+		source: string;
+		file_path: string;
+	}>,
+): { content: { type: "text"; text: string }[] } {
+	return {
+		content: datasources.map((ds) => {
+			const lines = [
+				"----------------------------------------",
+				`ID:                   ${ds.id}`,
+				`SUBCATEGORY:          ${ds.subcategory}`,
+				`PAGE_TITLE:           ${ds.page_title}`,
+				`DESCRIPTION:          ${ds.description}`,
+				`DATASOURCE:           ${ds.datasource}`,
+				`DATASOURCE_DESCRIPTION: ${ds.datasource_description}`,
+				`SOURCE:               ${ds.source}`,
+				`FILE_PATH:            ${ds.file_path}`,
+				`FILE_PATH_REMOTE_GIT: ${`${TERRAFORM_AWS_PROVIDER_REPOSITORY_URL}/website/docs/d/${ds.file_path.split("/").pop()}`}`,
+			];
+			return {
+				type: "text",
+				text: lines.join("\n"),
+			};
+		}),
 	};
 }

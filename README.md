@@ -27,6 +27,7 @@ and TypeScript, designed to provide contextual information related to
     - [Run it directly from JSR](#run-it-directly-from-jsr)
     - [Debugging \& Troubleshooting](#debugging--troubleshooting)
     - [Using Docker](#using-docker-1)
+  - [Roadmap](#roadmap)
   - [Contributing](#contributing)
   - [Security](#security)
   - [License](#license)
@@ -80,6 +81,10 @@ submit an
 
 | Tool Name              | Purpose                                                                 | Inputs                                                                 | Outputs                                                                                                                        | Use Case                                                                                                                                                                                                                                            |
 |------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `list-resources`       | List all AWS resource documentation files with metadata                  | None                                                                   | Array of resource objects with id, subcategory, page_title, description, resource, resource_description, source, file_path      | Discover all AWS resources supported by the Terraform AWS Provider, obtain file names/paths for further queries, build dashboards, summaries, or analytics.                                                                                        |
+| `get-resource-doc`     | Fetch a single AWS resource documentation file by name or fuzzy search   | `aws_resource` (string, optional): Resource name or description<br>`file_name` (string, optional): Exact file name (takes precedence) | Parsed and formatted documentation for the requested resource, with all metadata fields and full markdown body                  | Retrieve detailed documentation for a specific AWS resource, resolve ambiguous or natural language queries, provide LLMs or clients with structured resource information.                                     |
+| `list-datasources`     | List all AWS datasource documentation files with metadata                | None                                                                   | Array of datasource objects with id, subcategory, page_title, description, datasource, datasource_description, source, file_path | Discover all AWS datasources supported by the Terraform AWS Provider, obtain file names/paths for further queries, build dashboards, summaries, or analytics.                                                                                      |
+| `get-datasource-doc`   | Fetch a single AWS datasource documentation file by name or fuzzy search | `aws_datasource` (string, optional): Datasource name or description<br>`file_name` (string, optional): Exact file name (takes precedence) | Parsed and formatted documentation for the requested datasource, with all metadata fields and full markdown body                | Retrieve detailed documentation for a specific AWS datasource, resolve ambiguous or natural language queries, provide LLMs or clients with structured datasource information.                                 |
 | `get-open-issues`      | Retrieve open issues from Terraform AWS Provider GitHub repo             | `all` (boolean, optional): Retrieve all or first 30 issues             | Array of issue objects with ID, title, description, source, state, user, labels, creation/update timestamps, comments           | Analyze, triage, or report on current open issues. Build dashboards, correlate issues with documentation, understand if a Terraform behavior is expected or related to a known issue.                                                               |
 | `get-issue`            | Fetch detailed information for a specific GitHub issue                   | `issueNumber` (number, required): Exact GitHub issue number            | Detailed issue object with full metadata including body, timestamps, labels, comments                                          | Investigate a specific issue in detail, typically used after `get-open-issues` to obtain comprehensive information about a single issue of interest.                                                         |
 | `list-all-releases`    | Retrieve all releases from the Terraform AWS Provider GitHub repo        | None                                                                   | Array of release objects with ID, tag, name, author, published date, URL, asset count, and summary body                        | List all available versions/releases, build dashboards, changelogs, or analytics, correlate provider versions with documentation, issues, or upgrade guides.                                                  |
@@ -266,6 +271,10 @@ docker run -it --rm \
 > If you want to use a local `.env` file, you can pass it with
 > `--env-file .env`.
 
+## Roadmap
+
+- [ ] Add tool to retrieve provider's configuration.
+- [ ] Integrated with dedicated backend, to index, and provide advance search/code assistant documentation avoiding GitHub API rate limits.
 
 ## Contributing
 

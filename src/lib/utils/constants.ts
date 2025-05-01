@@ -11,7 +11,11 @@ export const TERRAFORM_AWS_PROVIDER_REPOSITORY_NAME = "terraform-provider-aws";
 export const TERRAFORM_AWS_PROVIDER_REGISTRY_URL =
 	"https://registry.terraform.io/providers/hashicorp/aws/latest";
 export const TERRAFORM_AWS_PROVIDER_RESOURCE_DOCS_PATH = "website/docs/r/";
-export const TERRAFORM_AWS_PROVIDER_DOCS_LOCAL_DIR = new URL(
+export const TERRAFORM_AWS_PROVIDER_DOCS_RESOURCES_LOCAL_DIR = new URL(
 	"../../data/remote-docs/tf-aws-resources",
+	import.meta.url,
+).pathname;
+export const TERRAFORM_AWS_PROVIDER_DOCS_DATASOURCES_LOCAL_DIR = new URL(
+	"../../data/remote-docs/tf-aws-datasources",
 	import.meta.url,
 ).pathname;
