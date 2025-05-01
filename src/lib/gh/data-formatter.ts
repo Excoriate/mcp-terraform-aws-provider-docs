@@ -1,4 +1,8 @@
 import type { Issue, Release } from "../adapters/github-api.ts";
+import {
+	TERRAFORM_AWS_PROVIDER_REPOSITORY_NAME,
+	TERRAFORM_AWS_PROVIDER_REPOSITORY_URL,
+} from "../utils/constants.ts";
 
 /**
  * Type representing a GitHub Issue (partial, extend as needed)
@@ -191,14 +195,46 @@ export function formatAwsResourceDocsAsTXT(
 		content: resources.map((res) => {
 			const lines = [
 				"----------------------------------------",
-				`ID:                  ${res.id}`,
-				`SUBCATEGORY:         ${res.subcategory}`,
-				`PAGE_TITLE:          ${res.page_title}`,
-				`DESCRIPTION:         ${res.description}`,
-				`RESOURCE:            ${res.resource}`,
-				`RESOURCE_DESCRIPTION:${res.resource_description}`,
-				`SOURCE:              ${res.source}`,
-				`FILE_PATH:           ${res.file_path}`,
+				`ID:                   ${res.id}`,
+				`SUBCATEGORY:          ${res.subcategory}`,
+				`PAGE_TITLE:           ${res.page_title}`,
+				`DESCRIPTION:          ${res.description}`,
+				`RESOURCE:             ${res.resource}`,
+				`RESOURCE_DESCRIPTION: ${res.resource_description}`,
+				`SOURCE:               ${res.source}`,
+				`FILE_PATH:            ${res.file_path}`,
+				`FILE_PATH_REMOTE_GIT: ${`${TERRAFORM_AWS_PROVIDER_REPOSITORY_URL}/website/docs/r/${res.file_path.split("/").pop()}`}`,
+			];
+			return {
+				type: "text",
+				text: lines.join("\n"),
+			};
+		}),
+	};
+}
+
+/**
+ * Formats an array of AWS resource doc file info into LLM-optimized text blocks.
+ *
+ * @param resources - Array of resource file info objects
+ * @returns Object containing an array of formatted content items, one per resource
+ */
+export function formatAwsResourceDocFilesAsTXT(
+	resources: Array<{
+		aws_resource: string;
+		file_name: string;
+		file_path: string;
+		source: string;
+	}>,
+): { content: { type: "text"; text: string }[] } {
+	return {
+		content: resources.map((res) => {
+			const lines = [
+				"----------------------------------------",
+				`AWS_RESOURCE: ${res.aws_resource}`,
+				`FILE_NAME:    ${res.file_name}`,
+				`FILE_PATH:    ${res.file_path}`,
+				`SOURCE:       ${res.source}`,
 			];
 			return {
 				type: "text",
