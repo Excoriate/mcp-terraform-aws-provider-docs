@@ -1,4 +1,4 @@
-import { Octokit } from "https://esm.sh/@octokit/rest@20.0.2";
+import { Octokit } from "npm:@octokit/rest@20.0.2";
 
 export const MAX_GITHUB_ISSUES_PAGES = 12;
 
