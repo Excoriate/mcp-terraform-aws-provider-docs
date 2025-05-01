@@ -53,7 +53,7 @@ resource "aws_finspace_kx_cluster" "example" {
     s3_key    = aws_s3_object.object.key
   }
 
-  # Depending on the amount of data cached, create/update timeouts 
+  # Depending on the amount of data cached, create/update timeouts
   # may need to be increased up to a potential maximum of 18 hours.
   timeouts {
     create = "18h"
@@ -113,7 +113,7 @@ The auto_scaling_configuration block supports the following arguments:
 The capacity_configuration block supports the following arguments:
 
 * `node_type` - (Required) Determines the hardware of the host computer used for your cluster instance. Each node type offers different memory and storage capabilities. Choose a node type based on the requirements of the application or software that you plan to run on your instance.
-  
+
   You can only specify one of the following values:
     * kx.s.large – The node type with a configuration of 12 GiB memory and 2 vCPUs.
     * kx.s.xlarge – The node type with a configuration of 27 GiB memory and 4 vCPUs.

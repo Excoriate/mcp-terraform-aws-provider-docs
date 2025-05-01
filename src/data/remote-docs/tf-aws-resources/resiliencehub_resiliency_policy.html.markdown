@@ -107,7 +107,7 @@ The following arguments are required:
   Represented by a string such as `1h`, `2h45m`, or `30m15s`.
 * `rto` - (Number) Recovery Time Objective (RTO) as a Go duration.
   Represented by a string such as `1h`, `2h45m`, or `30m15s`.
-  
+
 ## Attribute Reference
 
 This resource exports the following attributes in addition to the arguments above:

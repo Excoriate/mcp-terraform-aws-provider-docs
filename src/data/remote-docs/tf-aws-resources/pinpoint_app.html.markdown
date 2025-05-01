@@ -41,7 +41,7 @@ This resource supports the following arguments:
 `campaign_hook` supports the following:
 
 * `lambda_function_name` - (Optional) Lambda function name or ARN to be called for delivery. Conflicts with `web_url`
-* `mode` - (Required if `lambda_function_name` or `web_url` are provided) What mode Lambda should be invoked in. Valid values for this parameter are `DELIVERY`, `FILTER`.  
+* `mode` - (Required if `lambda_function_name` or `web_url` are provided) What mode Lambda should be invoked in. Valid values for this parameter are `DELIVERY`, `FILTER`.
 * `web_url` - (Optional) Web URL to call for hook. If the URL has authentication specified it will be added as authentication to the request. Conflicts with `lambda_function_name`
 
 `limits` supports the following:

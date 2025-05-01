@@ -2,7 +2,7 @@
 subcategory: "Lightsail"
 layout: "aws"
 page_title: "AWS: aws_lightsail_container_service"
-description: |- 
+description: |-
   Provides a resource to manage Lightsail container service
 ---
 

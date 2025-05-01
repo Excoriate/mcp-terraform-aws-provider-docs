@@ -47,5 +47,5 @@ import {
 Using `terraform import`, import Audit Manager Organization Admin Account Registration using the `id`. For example:
 
 ```console
-% terraform import aws_auditmanager_organization_admin_account_registration.example 123456789012 
+% terraform import aws_auditmanager_organization_admin_account_registration.example 123456789012
 ```

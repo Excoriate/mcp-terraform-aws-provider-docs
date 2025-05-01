@@ -102,7 +102,7 @@ The following arguments are required:
 * `iceberg_configuration` (Optional) - The configuration for an Iceberg orphan file deletion optimizer.
     * `orphan_file_retention_period_in_days` (Optional) - The number of days that orphan files should be retained before file deletion. Defaults to `3`.
     * `location` (Optional) - Specifies a directory in which to look for files. You may choose a sub-directory rather than the top-level table location. Defaults to the table's location.
-  
+
 ### Retention Configuration
 
 * `iceberg_configuration` (Optional) - The configuration for an Iceberg snapshot retention optimizer.

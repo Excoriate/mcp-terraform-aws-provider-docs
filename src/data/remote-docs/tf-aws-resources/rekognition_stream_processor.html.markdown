@@ -328,5 +328,5 @@ import {
 Using `terraform import`, import Rekognition Stream Processor using the `name`. For example:
 
 ```console
-% terraform import aws_rekognition_stream_processor.example my-stream 
+% terraform import aws_rekognition_stream_processor.example my-stream
 ```

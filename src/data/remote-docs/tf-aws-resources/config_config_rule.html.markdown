@@ -123,13 +123,13 @@ resource "aws_config_config_rule" "example" {
 		  resourceType == "AWS::DynamoDB::Table" {
 		  configuration.tableStatus == ['ACTIVE']
 	  }
-	  
+
 	  rule checkcompliance when
 		  resourceType == "AWS::DynamoDB::Table"
 		  tableisactive {
 			  supplementaryConfiguration.ContinuousBackupsDescription.pointInTimeRecoveryDescription.pointInTimeRecoveryStatus == "ENABLED"
 	  }
-EOF					
+EOF
     }
   }
 }

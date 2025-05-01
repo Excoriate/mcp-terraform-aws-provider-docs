@@ -71,5 +71,5 @@ import {
 Using `terraform import`, import Athena Prepared Statement using the `WORKGROUP-NAME/STATEMENT-NAME`. For example:
 
 ```console
-% terraform import aws_athena_prepared_statement.example 12345abcde/example 
+% terraform import aws_athena_prepared_statement.example 12345abcde/example
 ```

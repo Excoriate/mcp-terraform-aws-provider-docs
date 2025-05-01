@@ -1,14 +1,12 @@
 import { parse as parseYaml } from "jsr:@std/yaml@^1.0.6";
-
+import { TERRAFORM_AWS_PROVIDER_DOCS_LOCAL_DIR } from "../utils/constants.ts";
 /**
  * List all AWS resource documentation files in a local directory, extracting metadata from each file.
  *
  * @param dirPath - Path to the directory containing .html.markdown files
  * @returns Array of resource metadata objects
  */
-export async function listLocalAwsResourceDocsWithMetadata(
-	dirPath: string,
-): Promise<
+export async function listLocalAwsResourceDocsWithMetadata(): Promise<
 	Array<{
 		id: string;
 		subcategory: string;
@@ -31,9 +29,11 @@ export async function listLocalAwsResourceDocsWithMetadata(
 		file_path: string;
 	}> = [];
 
-	for await (const entry of Deno.readDir(dirPath)) {
+	for await (const entry of Deno.readDir(
+		TERRAFORM_AWS_PROVIDER_DOCS_LOCAL_DIR,
+	)) {
 		if (!entry.isFile || !entry.name.endsWith(".html.markdown")) continue;
-		const file_path = `${dirPath}/${entry.name}`;
+		const file_path = `${TERRAFORM_AWS_PROVIDER_DOCS_LOCAL_DIR}/${entry.name}`;
 		let content = "";
 		try {
 			content = await Deno.readTextFile(file_path);

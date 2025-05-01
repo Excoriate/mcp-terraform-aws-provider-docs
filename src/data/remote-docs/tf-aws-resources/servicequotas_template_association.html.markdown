@@ -46,5 +46,5 @@ import {
 Using `terraform import`, import Service Quotas Template Association using the `id`. For example:
 
 ```console
-% terraform import aws_servicequotas_template_association.example 123456789012 
+% terraform import aws_servicequotas_template_association.example 123456789012
 ```

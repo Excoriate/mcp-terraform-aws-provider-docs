@@ -3,7 +3,7 @@ subcategory: "Account Management"
 layout: "aws"
 page_title: "AWS: aws_account_region"
 description: |-
-  Enable (Opt-In) or Disable (Opt-Out) a particular Region for an AWS account 
+  Enable (Opt-In) or Disable (Opt-Out) a particular Region for an AWS account
 ---
 
 # Resource: aws_account_region

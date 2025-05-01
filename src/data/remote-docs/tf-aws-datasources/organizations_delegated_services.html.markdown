@@ -3,7 +3,7 @@ subcategory: "Organizations"
 layout: "aws"
 page_title: "AWS: aws_organizations_delegated_services"
 description: |-
-  Get a list the AWS services for which the specified account is a delegated administrator 
+  Get a list the AWS services for which the specified account is a delegated administrator
 ---
 
 # Data Source: aws_organizations_delegated_services

@@ -28,7 +28,7 @@ type Mutation
 putPost(id: ID!,title: String! ): Post
 
 }
-EOF  
+EOF
 }
 ```
 

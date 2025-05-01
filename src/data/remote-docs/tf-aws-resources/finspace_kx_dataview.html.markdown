@@ -29,7 +29,7 @@ resource "aws_finspace_kx_dataview" "example" {
     db_paths    = ["/*"]
   }
 
-  # Depending on the type of cache and size of the Kx Volume, create/update timeouts 
+  # Depending on the type of cache and size of the Kx Volume, create/update timeouts
   # may need to be increased up to a potential maximum of 24 hours and the delete timeout to 12 hours.
   timeouts {
     create = "24h"

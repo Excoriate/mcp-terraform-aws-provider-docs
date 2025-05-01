@@ -3,7 +3,7 @@ subcategory: "CloudSearch"
 layout: "aws"
 page_title: "AWS: aws_cloudsearch_domain_service_access_policy"
 description: |-
-  Provides an CloudSearch domain service access policy resource. 
+  Provides an CloudSearch domain service access policy resource.
 ---
 
 # Resource: aws_cloudsearch_domain_service_access_policy

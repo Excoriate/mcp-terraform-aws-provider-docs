@@ -3,7 +3,7 @@ subcategory: "CloudSearch"
 layout: "aws"
 page_title: "AWS: aws_cloudsearch_domain"
 description: |-
-  Provides an CloudSearch domain resource. 
+  Provides an CloudSearch domain resource.
 ---
 
 # Resource: aws_cloudsearch_domain

@@ -1,3 +1,4 @@
+import { parse as parseYaml } from "jsr:@std/yaml@^1.0.6";
 import type { Issue, Release } from "../adapters/github-api.ts";
 import {
 	TERRAFORM_AWS_PROVIDER_REPOSITORY_NAME,
@@ -241,5 +242,126 @@ export function formatAwsResourceDocFilesAsTXT(
 				text: lines.join("\n"),
 			};
 		}),
+	};
+}
+
+/**
+ * Parses a single AWS resource doc markdown file (frontmatter and headings) and returns metadata.
+ *
+ * @param content - The markdown content of the resource doc
+ * @param file_path - The file path (for source field)
+ * @returns Metadata object with id, subcategory, page_title, description, resource, resource_description, source, file_path
+ */
+export function parseAwsResourceDocMarkdown(
+	content: string,
+	file_path: string,
+): {
+	id: string;
+	subcategory: string;
+	page_title: string;
+	description: string;
+	resource: string;
+	resource_description: string;
+	source: string;
+	file_path: string;
+} {
+	// Extract YAML frontmatter
+	let yamlBlock = "";
+	let yamlObj: unknown = {};
+	let yamlMalformed = false;
+	if (content.startsWith("---")) {
+		const endIdx = content.indexOf("---", 3);
+		if (endIdx !== -1) {
+			yamlBlock = content.slice(3, endIdx).trim();
+			try {
+				yamlObj = parseYaml(yamlBlock) || {};
+			} catch {
+				yamlMalformed = true;
+			}
+		} else {
+			yamlMalformed = true;
+		}
+	}
+	// Extract fields from YAML
+	let subcategory = "(missing)";
+	let page_title = "(missing)";
+	let description = "(missing)";
+	if (!yamlMalformed && typeof yamlObj === "object" && yamlObj !== null) {
+		const y = yamlObj as Record<string, unknown>;
+		if (typeof y.subcategory === "string") subcategory = y.subcategory;
+		if (typeof y.page_title === "string") page_title = y.page_title;
+		if (typeof y.description === "string") description = y.description;
+	} else if (yamlMalformed) {
+		subcategory = "(malformed)";
+		page_title = "(malformed)";
+		description = "(malformed)";
+	}
+	// Extract # Resource: heading and first paragraph
+	let resource = "(missing)";
+	let resource_description = "(missing)";
+	let id = "(missing)";
+	const resourceMatch = content.match(/^# Resource: ([^\n]+)$/m);
+	if (resourceMatch) {
+		resource = resourceMatch[1].trim();
+		id = resource;
+		// Find the paragraph after the heading
+		const afterHeading = content.split(resourceMatch[0])[1] || "";
+		const paraMatch = afterHeading.match(/\n\s*([\s\S]+?)(\n{2,}|$)/);
+		if (paraMatch) {
+			resource_description = paraMatch[1].replace(/\n/g, " ").trim();
+		}
+	} else {
+		// fallback: use filename as id
+		id =
+			file_path
+				.split("/")
+				.pop()
+				?.replace(/\.html\.markdown$/, "") || "(missing)";
+	}
+	// Build source (relative path)
+	const source = file_path;
+	return {
+		id,
+		subcategory,
+		page_title,
+		description,
+		resource,
+		resource_description,
+		source,
+		file_path,
+	};
+}
+
+/**
+ * Formats a single AWS resource documentation metadata object into an LLM-optimized text block.
+ *
+ * @param res - Resource metadata object (as returned by parseAwsResourceDocMarkdown)
+ * @returns Object with { type: 'text', text: string }
+ */
+export function formatAwsResourceDocAsTXT(res: {
+	id: string;
+	subcategory: string;
+	page_title: string;
+	description: string;
+	resource: string;
+	resource_description: string;
+	source: string;
+	file_path: string;
+}): { type: "text"; text: string } {
+	const lines = [
+		"----------------------------------------",
+		`ID:                   ${res.id}`,
+		`SUBCATEGORY:          ${res.subcategory}`,
+		`PAGE_TITLE:           ${res.page_title}`,
+		`DESCRIPTION:          ${res.description}`,
+		`RESOURCE:             ${res.resource}`,
+		`RESOURCE_DESCRIPTION: ${res.resource_description}`,
+		`SOURCE:               ${res.source}`,
+		`FILE_PATH:            ${res.file_path}`,
+		`FILE_PATH_REMOTE_GIT: ${`${TERRAFORM_AWS_PROVIDER_REPOSITORY_URL}/website/docs/r/${res.file_path.split("/").pop()}`}`,
+	];
+	return {
+		type: "text",
+		text: lines.join("\n"),
 	};
 }

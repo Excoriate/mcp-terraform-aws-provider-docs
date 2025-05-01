@@ -150,5 +150,5 @@ import {
 Using `terraform import`, import CloudFront Continuous Deployment Policy using the `id`. For example:
 
 ```console
-% terraform import aws_cloudfront_continuous_deployment_policy.example abcd-1234 
+% terraform import aws_cloudfront_continuous_deployment_policy.example abcd-1234
 ```

@@ -3,7 +3,7 @@ subcategory: "EC2 (Elastic Compute Cloud)"
 layout: "aws"
 page_title: "AWS: aws_ec2_instance_state"
 description: |-
-  Provides an EC2 instance state resource. This allows managing an instance power state. 
+  Provides an EC2 instance state resource. This allows managing an instance power state.
 ---
 
 # Resource: aws_ec2_instance_state

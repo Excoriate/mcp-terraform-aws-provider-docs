@@ -3,7 +3,7 @@ subcategory: "Organizations"
 layout: "aws"
 page_title: "AWS: aws_organizations_delegated_administrators"
 description: |-
-  Get a list of AWS accounts that are designated as delegated administrators in this organization 
+  Get a list of AWS accounts that are designated as delegated administrators in this organization
 ---
 
 # Data Source: aws_organizations_delegated_administrators

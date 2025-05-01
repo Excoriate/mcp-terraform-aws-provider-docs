@@ -8,7 +8,7 @@ description: |-
 
 # Resource: aws_ec2_traffic_mirror_session
 
-Provides an Traffic mirror session.  
+Provides an Traffic mirror session.
 Read [limits and considerations](https://docs.aws.amazon.com/vpc/latest/mirroring/traffic-mirroring-considerations.html) for traffic mirroring
 
 ## Example Usage

@@ -11,12 +11,17 @@ import {
 } from "@modelcontextprotocol/sdk/types.js";
 import { GitHubAdapter } from "./lib/adapters/github-api.ts";
 import type { Issue } from "./lib/adapters/github-api.ts";
+import {
+	formatAwsResourceDocAsTXT,
+	formatAwsResourceDocsAsTXT,
+} from "./lib/gh/data-formatter.ts";
 import { formatGhIssuesDataAsTXT } from "./lib/gh/data-formatter.ts";
 import { formatGhReleasesDataAsTXT } from "./lib/gh/data-formatter.ts";
 import { formatGhReleaseWithIssuesDataAsTXT } from "./lib/gh/data-formatter.ts";
 import { getAndValidateGithubToken } from "./lib/gh/token.ts";
 import { McpNotificationLogger } from "./lib/mcp/logger-events.ts";
 import { RESOURCES, getResourceByUri } from "./lib/mcp/resources.ts";
+import { listLocalAwsResourceDocsWithMetadata } from "./lib/adapters/local-docs-api.ts";
 import {
 	TOOLS_ISSUES_GET_ISSUE,
 	TOOLS_ISSUES_GET_ISSUE_ARGS_SCHEMA,
@@ -32,9 +37,11 @@ import {
 	TOOLS_RELEASES_LIST_ALL_ARGS_SCHEMA,
 } from "./lib/mcp/tools-releases.ts";
 import {
+	TOOLS_RESOURCES_GET_RESOURCE_DOC,
+	TOOLS_RESOURCES_GET_RESOURCE_DOC_ARGS_SCHEMA,
 	TOOLS_RESOURCES_LIST_RESOURCES,
 	TOOLS_RESOURCES_LIST_RESOURCES_ARGS_SCHEMA,
-	listAwsResourceDocsWithMetadataFromLocal,
+	getResourceDocFromFileName,
 } from "./lib/mcp/tools-resources.ts";
 import {
 	MCP_SERVER_NAME,
@@ -83,6 +90,7 @@ server.setRequestHandler(ListToolsRequestSchema, () => ({
 		TOOLS_RELEASES_GET_BY_TAG,
 		TOOLS_RELEASES_GET_LATEST,
 		TOOLS_RESOURCES_LIST_RESOURCES,
+		TOOLS_RESOURCES_GET_RESOURCE_DOC,
 	],
 }));
 
@@ -392,8 +400,11 @@ server.setRequestHandler(
 							],
 						};
 					}
-					// Use local files for resource docs instead of GitHub API
-					const formatted = await listAwsResourceDocsWithMetadataFromLocal();
+
+					// List by now, from local directoy.
+					// FIXME: Change it in the future, for the backend that'll sync these docs with the GitHub repo.
+					const resources = await listLocalAwsResourceDocsWithMetadata();
+					const formatted = formatAwsResourceDocsAsTXT(resources).content;
 					return { content: formatted };
 				} catch (error: unknown) {
 					return {
@@ -401,6 +412,56 @@ server.setRequestHandler(
 							{
 								type: "text" as const,
 								text: `Error handling ${TOOLS_RESOURCES_LIST_RESOURCES.name}: ${error instanceof Error ? error.message : String(error)}`,
+							},
+						],
+					};
+				}
+			case TOOLS_RESOURCES_GET_RESOURCE_DOC.name:
+				try {
+					const argsValidationResult =
+						TOOLS_RESOURCES_GET_RESOURCE_DOC_ARGS_SCHEMA.safeParse(toolArgs);
+
+					if (!argsValidationResult.success) {
+						return {
+							content: [
+								{
+									type: "text" as const,
+									text: `Invalid arguments: ${argsValidationResult.error.message}`,
+								},
+							],
+						};
+					}
+
+					// const { aws_resource, file_name } = argsValidationResult.data;
+					const { file_name } = argsValidationResult.data;
+
+					if (file_name) {
+						const result = await getResourceDocFromFileName(file_name);
+
+						if ("type" in result && result.type === "text") {
+							return { content: [result] };
+						}
+
+						// At this point, result is { content, markdown }
+						const { markdown } = result as Exclude<
+							typeof result,
+							{ type: string; text: string }
+						>;
+						const formatted = formatAwsResourceDocAsTXT(markdown);
+						return { content: [formatted] };
+					}
+
+					return {
+						content: [
+							{ type: "text", text: "Error: file_name must be provided." },
+						],
+					};
+				} catch (error: unknown) {
+					return {
+						content: [
+							{
+								type: "text" as const,
+								text: `Error: ${error instanceof Error ? error.message : String(error)}`,
 							},
 						],
 					};

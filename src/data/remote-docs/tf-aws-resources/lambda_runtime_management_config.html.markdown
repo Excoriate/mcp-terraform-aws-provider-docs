@@ -34,7 +34,7 @@ resource "aws_lambda_runtime_management_config" "example" {
 
   # Runtime version ARN's contain a hashed value (not the friendly runtime
   # name). There are currently no API's to retrieve this ARN, but the value
-  # can be copied from the "Runtime settings" section of a function in the 
+  # can be copied from the "Runtime settings" section of a function in the
   # AWS console.
   runtime_version_arn = "arn:aws:lambda:us-east-1::runtime:abcd1234"
 }

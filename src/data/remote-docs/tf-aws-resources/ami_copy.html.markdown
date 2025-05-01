@@ -44,7 +44,7 @@ This resource supports the following arguments:
 * `source_ami_region` - (Required) Region from which the AMI will be copied. This may be the
   same as the AWS provider region in order to create a copy within the same region.
 * `destination_outpost_arn` - (Optional) ARN of the Outpost to which to copy the AMI.
-  Only specify this parameter when copying an AMI from an AWS Region to an Outpost. The AMI must be in the Region of the destination Outpost.  
+  Only specify this parameter when copying an AMI from an AWS Region to an Outpost. The AMI must be in the Region of the destination Outpost.
 * `encrypted` - (Optional) Whether the destination snapshots of the copied image should be encrypted. Defaults to `false`
 * `kms_key_id` - (Optional) Full ARN of the KMS Key to use when encrypting the snapshots of an image during a copy operation. If not specified, then the default AWS KMS Key will be used
 * `tags` - (Optional) Map of tags to assign to the resource. If configured with a provider [`default_tags` configuration block](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#default_tags-configuration-block) present, tags with matching keys will overwrite those defined at the provider-level.

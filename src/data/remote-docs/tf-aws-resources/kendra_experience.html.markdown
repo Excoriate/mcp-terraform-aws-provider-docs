@@ -50,7 +50,7 @@ The following arguments are optional:
 
 ### `configuration`
 
-~> **NOTE:** By default of the AWS Kendra API, the `content_source_configuration.direct_put_content` parameter will be set to `false` if not provided.  
+~> **NOTE:** By default of the AWS Kendra API, the `content_source_configuration.direct_put_content` parameter will be set to `false` if not provided.
 
 The `configuration` configuration block supports the following arguments:
 
