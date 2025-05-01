@@ -43,6 +43,11 @@ hooks-run:
 # Alias for run
 serve: run-dev
 
+# Publish to the javascript registry
+publish-jsr:
+    @echo ">>> Publishing to the javascript registry..."
+    @deno publish
+
 # 🕵️ Run the MCP server with the MCP Inspector attached via stdio
 [working-directory:'src']
 inspect:
